@@ -29,9 +29,8 @@
 </head>
 <body class="text-gray-800 antialiased min-h-screen flex flex-col">
 
-    <!-- Header Banner -->
     <header class="bg-indigo-600 text-white shadow-md">
-        <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <i class="fa-solid fa-clipboard-check text-2xl md:text-3xl"></i>
                 <div>
@@ -46,80 +45,129 @@
         </div>
     </header>
 
-    <!-- Main Container -->
-    <main class="flex-grow max-w-5xl mx-auto w-full px-4 py-6 flex flex-col gap-6">
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 flex flex-col gap-6">
         
         <!-- Navigation Tabs -->
-        <nav class="flex border-b border-gray-200 bg-white rounded-t-lg shadow-sm px-2 pt-2">
-            <button id="tab-btn-checkin" onclick="switchTab('checkin')" class="px-6 py-3 text-sm transition-colors tab-active">
+        <nav class="flex border-b border-gray-200 bg-white rounded-t-xl shadow-xs px-3 pt-2">
+            <button id="tab-btn-checkin" onclick="switchTab('checkin')" class="px-6 py-3 text-sm md:text-base transition-colors tab-active">
                 <i class="fa-solid fa-user-check mr-2"></i> หน้าลงทะเบียน (User)
             </button>
-            <button id="tab-btn-admin" onclick="switchTab('admin')" class="px-6 py-3 text-sm transition-colors tab-inactive">
+            <button id="tab-btn-admin" onclick="switchTab('admin')" class="px-6 py-3 text-sm md:text-base transition-colors tab-inactive">
                 <i class="fa-solid fa-gear mr-2"></i> ผู้ดูแลระบบ (Admin)
             </button>
         </nav>
 
-        <!-- VIEW: USER CHECK-IN -->
-        <section id="view-checkin" class="bg-white rounded-b-lg rounded-tr-lg shadow-sm p-6 md:p-8 animate-[slideInRight_0.2s_ease-out]">
-            <div class="max-w-lg mx-auto">
-                <!-- Activity Selection & Display -->
-                <div class="mb-6">
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">📌 เลือกหัวข้อกิจกรรมที่ต้องการเช็คชื่อ</label>
-                    <select id="user-activity-select" onchange="changeUserActivity()" class="block w-full px-3 py-2.5 text-base border-gray-300 rounded-lg border shadow-sm focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50 font-medium text-indigo-900">
-                        <!-- Options populated via JS -->
-                    </select>
-                </div>
-
-                <div class="text-center mb-8 bg-indigo-50 p-4 rounded-xl border border-indigo-100 shadow-inner">
-                    <div class="flex items-center justify-center gap-4 text-xs md:text-sm text-indigo-700 font-medium">
-                        <span id="display-date-start"><i class="fa-regular fa-calendar mr-1"></i> -</span>
-                        <span class="text-indigo-300"><i class="fa-solid fa-arrow-right"></i></span>
-                        <span id="display-date-end"><i class="fa-regular fa-calendar-check mr-1"></i> -</span>
-                    </div>
-                </div>
-
-                <!-- Check-in Form -->
-                <form id="checkin-form" onsubmit="handleCheckIn(event)" class="space-y-6">
-                    <div>
-                        <label for="emp-select" class="block text-sm font-medium text-gray-700 mb-2">เลือกรอยชื่อของคุณ</label>
-                        <select id="emp-select" onchange="checkAlreadyDoneUser()" required class="block w-full pl-3 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-lg border shadow-sm bg-white">
-                            <option value="" disabled selected>-- เลือกรายชื่อของคุณ --</option>
-                        </select>
-                    </div>
-
-                    <!-- Banner warning when user already checked in -->
-                    <div id="user-already-done-banner" class="hidden p-4 bg-amber-50 border border-amber-300 text-amber-800 rounded-lg text-center font-medium shadow-sm">
-                        <i class="fa-solid fa-circle-exclamation text-amber-600 text-xl mr-2"></i> คุณได้ลงชื่อเข้าร่วมกิจกรรมนี้เรียบร้อยแล้ว
-                    </div>
-
-                    <button id="btn-submit-checkin" type="submit" class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none transition-colors">
-                        <i class="fa-solid fa-check-circle mr-2"></i> ทำแล้ว (Mark as Done)
-                    </button>
-                </form>
-
-                <!-- Status List Display in User View -->
-                <div class="mt-8 border-t border-gray-200 pt-6">
-                    <div id="user-completion-banner" class="hidden mb-4 p-4 bg-emerald-100 border border-emerald-300 text-emerald-800 rounded-lg text-center font-medium shadow-sm">
-                        <i class="fa-solid fa-trophy text-emerald-600 text-xl mr-2"></i> 🎉 ยินดีด้วย! พนักงานเข้าร่วมกิจกรรมนี้ครบทุกคนเรียบร้อยแล้ว
-                    </div>
-
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-sm font-semibold text-gray-700 flex items-center">
-                            <i class="fa-solid fa-list-check text-indigo-500 mr-2"></i> รายชื่อและสถานะในกิจกรรมนี้
-                        </h3>
-                        <span id="user-status-count" class="text-xs bg-indigo-100 text-indigo-800 font-semibold px-2.5 py-1 rounded-full">
-                            0/0 ทำแล้ว
+        <!-- USER VIEW -->
+        <section id="view-checkin" class="bg-white rounded-b-xl rounded-tr-xl shadow-xs p-4 sm:p-6 md:p-8 animate-[slideInRight_0.2s_ease-out]">
+            <div class="max-w-5xl mx-auto">
+                <!-- Main Activity Overview & 1-Tap Selector (4 Cards visible without scrolling) -->
+                <div class="mb-6 bg-gradient-to-br from-indigo-50/90 via-white to-blue-50/80 p-4 sm:p-5 rounded-2xl border border-indigo-100 shadow-xs">
+                    <div class="flex items-center justify-between mb-3.5">
+                        <div class="flex items-center gap-2">
+                            <span class="flex h-2.5 w-2.5 relative">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-indigo-600"></span>
+                            </span>
+                            <span class="text-xs md:text-sm font-bold text-indigo-950 flex items-center gap-1.5 uppercase tracking-wide">
+                                <i class="fa-solid fa-list-check text-indigo-600"></i> เลือกกิจกรรมที่ต้องการเช็คชื่อ (<span id="user-act-count">0</span>)
+                            </span>
+                        </div>
+                        <span class="text-xs text-indigo-600 font-medium flex items-center gap-1">
+                            <i class="fa-solid fa-arrow-pointer"></i> แตะการ์ดเพื่อเลือก
                         </span>
                     </div>
-                    <div id="user-status-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-64 overflow-y-auto custom-scrollbar p-1">
-                        <!-- Populated via JS -->
+                    
+                    <!-- Activity Cards Container -->
+                    <div id="mini-dashboard-container" class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+                </div>
+
+                <div class="max-w-lg mx-auto">
+                    <!-- Hidden Input maintaining state compatibility -->
+                    <input type="hidden" id="user-activity-select" value="">
+
+                    <!-- Active Activity Details & Countdown Header -->
+                    <div class="mb-6 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white p-5 rounded-2xl shadow-sm relative overflow-hidden">
+                        <div class="absolute -right-4 -bottom-6 opacity-10 text-8xl text-white">
+                            <i class="fa-solid fa-calendar-check"></i>
+                        </div>
+
+                        <div class="relative z-10">
+                            <div class="flex items-center gap-2 mb-1.5">
+                                <span class="bg-indigo-500/60 text-indigo-100 text-xs font-bold px-2.5 py-0.5 rounded-full border border-indigo-400/40">
+                                    กำลังเช็คชื่อกิจกรรม
+                                </span>
+                            </div>
+                            <h2 id="current-selected-topic" class="text-lg md:text-xl font-bold text-white tracking-wide truncate">
+                                -
+                            </h2>
+
+                            <div class="flex items-center gap-4 text-xs md:text-sm text-indigo-100 mt-2">
+                                <span id="display-date-start"><i class="fa-regular fa-calendar mr-1"></i> -</span>
+                                <span class="text-indigo-300"><i class="fa-solid fa-arrow-right"></i></span>
+                                <span id="display-date-end"><i class="fa-regular fa-calendar-check mr-1"></i> -</span>
+                            </div>
+
+                            <!-- Countdown Timer Card -->
+                            <div id="countdown-card" class="mt-3 pt-3 border-t border-indigo-500/50 flex flex-col items-start justify-center text-xs md:text-sm">
+                                <div class="text-indigo-200 font-medium flex items-center gap-1.5">
+                                    <i class="fa-solid fa-hourglass-half text-amber-300 animate-pulse"></i>
+                                    <span id="countdown-label">เวลาที่เหลือในการลงชื่อ:</span>
+                                </div>
+                                <div id="countdown-timer" class="font-bold text-sm md:text-base text-amber-200 tracking-wider mt-0.5">
+                                    -- วัน -- ชั่วโมง -- นาที -- วินาที
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form id="checkin-form" onsubmit="handleCheckIn(event)" class="space-y-6">
+                        <div>
+                            <label for="emp-select" class="block text-sm font-semibold text-gray-700 mb-2">เลือกรายชื่อของคุณ</label>
+                            <select id="emp-select" onchange="checkAlreadyDoneUser()" required class="block w-full pl-3 pr-10 py-3 text-sm md:text-base border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 rounded-xl border shadow-xs bg-white">
+                                <option value="" disabled selected>-- เลือกรายชื่อของคุณ --</option>
+                            </select>
+                        </div>
+
+                        <!-- Banner warning when activity is expired -->
+                        <div id="user-expired-banner" class="hidden p-4 bg-red-50 border border-red-300 text-red-800 rounded-xl text-center font-medium shadow-xs text-sm">
+                            <i class="fa-solid fa-circle-xmark text-red-600 text-lg mr-2"></i> หมดเวลาลงชื่อเข้าร่วมกิจกรรมนี้แล้ว
+                        </div>
+
+                        <!-- Banner warning when user already checked in -->
+                        <div id="user-already-done-banner" class="hidden p-4 bg-amber-50 border border-amber-300 text-amber-800 rounded-xl text-center font-medium shadow-xs text-sm">
+                            <i class="fa-solid fa-circle-exclamation text-amber-600 text-lg mr-2"></i> คุณได้ลงชื่อเข้าร่วมกิจกรรมนี้เรียบร้อยแล้ว
+                        </div>
+
+                        <button id="btn-submit-checkin" type="submit" class="w-full flex justify-center items-center py-3.5 px-4 border border-transparent rounded-xl shadow-xs text-sm md:text-base font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none transition-colors">
+                            <i class="fa-solid fa-check-circle mr-2 text-lg"></i> ทำแล้ว (Mark as Done)
+                        </button>
+                    </form>
+
+                    <div class="mt-8 border-t border-gray-200 pt-6">
+                        <div id="user-completion-banner" class="hidden mb-4 p-4 bg-emerald-100 border border-emerald-300 text-emerald-800 rounded-xl text-center font-medium shadow-xs text-sm">
+                            <i class="fa-solid fa-trophy text-emerald-600 text-xl mr-2"></i> 🎉 ยินดีด้วย! พนักงานเข้าร่วมกิจกรรมนี้ครบทุกคนเรียบร้อยแล้ว
+                        </div>
+
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-sm font-bold text-gray-700 flex items-center">
+                                <i class="fa-solid fa-list-check text-indigo-500 mr-2"></i> รายชื่อและสถานะในกิจกรรมนี้
+                            </h3>
+                            <span id="user-status-count" class="text-xs bg-indigo-100 text-indigo-800 font-bold px-3 py-1 rounded-full">
+                                0/0 ทำแล้ว
+                            </span>
+                        </div>
+                        <div id="user-status-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-64 overflow-y-auto custom-scrollbar p-1">
+                            <!-- Populated via JS -->
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- VIEW: ADMIN PANEL -->
-        <section id="view-admin" class="hidden bg-white rounded-b-lg rounded-tl-lg shadow-sm p-6 md:p-8">
+        <!-- ADMIN VIEW -->
+        <section id="view-admin" class="hidden bg-white rounded-b-xl rounded-tl-xl shadow-xs p-4 sm:p-6 md:p-8">
             
             <!-- ADMIN LOGIN VIEW -->
             <div id="admin-login-view" class="max-w-sm mx-auto py-12 flex flex-col items-center animate-[slideInRight_0.2s_ease-out]">
@@ -129,8 +177,8 @@
                 <h3 class="text-xl font-bold text-gray-800 mb-2">Admin Access</h3>
                 <p class="text-sm text-gray-500 mb-6 text-center">กรุณากรอกรหัสผ่านเพื่อเข้าสู่ระบบผู้ดูแล</p>
                 <form onsubmit="handleAdminLogin(event)" class="w-full space-y-4">
-                    <input type="password" id="admin-password-input" placeholder="Enter Password" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 text-center tracking-widest text-lg">
-                    <button type="submit" class="w-full bg-indigo-600 text-white font-medium py-3 rounded-lg shadow hover:bg-indigo-700 transition-colors">
+                    <input type="password" id="admin-password-input" placeholder="Enter Password" required class="w-full p-3 border border-gray-300 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 text-center tracking-widest text-lg">
+                    <button type="submit" class="w-full bg-indigo-600 text-white font-medium py-3 rounded-xl shadow-xs hover:bg-indigo-700 transition-colors">
                         <i class="fa-solid fa-key mr-2"></i> Unlock System
                     </button>
                     <div class="text-center pt-2">
@@ -141,153 +189,247 @@
                 </form>
             </div>
 
-            <!-- ADMIN CONTENT VIEW -->
             <div id="admin-content-view" class="hidden flex flex-col gap-6">
                 
                 <!-- Admin Sub-Navigation Tabs -->
                 <div class="flex border-b border-gray-200 bg-gray-100 p-1 rounded-xl gap-1 text-xs md:text-sm font-medium">
-                    <button type="button" id="admin-subtab-main" onclick="switchAdminSubTab('main')" class="flex-1 py-2 px-4 rounded-lg transition-all bg-white text-indigo-600 shadow-sm font-semibold flex items-center justify-center gap-2">
+                    <button type="button" id="admin-subtab-main" onclick="switchAdminSubTab('main')" class="flex-1 py-2.5 px-4 rounded-lg transition-all bg-white text-indigo-600 shadow-xs font-bold flex items-center justify-center gap-2">
                         <i class="fa-solid fa-chart-line"></i>
                         <span>จัดการกิจกรรม & รายงาน</span>
                     </button>
-                    <button type="button" id="admin-subtab-settings" onclick="switchAdminSubTab('settings')" class="flex-1 py-2 px-4 rounded-lg transition-all text-gray-600 hover:text-gray-900 font-medium flex items-center justify-center gap-2">
+                    <button type="button" id="admin-subtab-settings" onclick="switchAdminSubTab('settings')" class="flex-1 py-2.5 px-4 rounded-lg transition-all text-gray-600 hover:text-gray-900 font-medium flex items-center justify-center gap-2">
                         <i class="fa-solid fa-sliders"></i>
                         <span>ตั้งค่าผู้ดูแล & การ์ดเชื่อมต่อ</span>
                     </button>
                 </div>
 
-                <!-- SUB-VIEW 1: MAIN DASHBOARD (ACTIVITIES, EMPLOYEES & REPORTS) -->
-                <div id="admin-subview-main" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- SUB-VIEW 1: MAIN DASHBOARD (EXPANDED DESKTOP 12-COLUMN GRID) -->
+                <div id="admin-subview-main" class="grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start">
                     
-                    <!-- Left Column: Activity Mgmt & Employee Mgmt -->
-                    <div class="lg:col-span-1 space-y-6">
+                    <!-- Left Column: Activity Mgmt & Employee Mgmt (lg:col-span-5) -->
+                    <div class="lg:col-span-5 space-y-6">
                         
-                        <!-- 1. Activity Management -->
-                        <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 shadow-sm">
-                            <h3 class="text-base font-semibold mb-4 text-gray-800 border-b pb-2"><i class="fa-solid fa-calendar-days text-indigo-500 mr-2"></i> จัดการกิจกรรม</h3>
-                            
-                            <div class="mb-4">
-                                <label class="block text-xs font-medium text-gray-600 mb-1">เลือกกิจกรรมเพื่อแก้ไข / สร้างใหม่</label>
-                                <select id="admin-activity-select" onchange="changeAdminActivity()" class="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 mb-2 bg-white font-medium">
-                                    <option value="new" class="text-indigo-600 font-semibold">+ สร้างกิจกรรมใหม่ (Create New)</option>
-                                </select>
+                        <div class="bg-gray-50/90 p-4 sm:p-5 rounded-2xl border border-gray-200 shadow-xs">
+                            <div class="flex items-center justify-between border-b pb-3 mb-3.5">
+                                <h3 class="text-base font-bold text-gray-800 flex items-center">
+                                    <i class="fa-solid fa-calendar-days text-indigo-600 mr-2"></i> จัดการกิจกรรม
+                                </h3>
+                                <button type="button" onclick="createNewActivityForm()" class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 shadow-xs">
+                                    <i class="fa-solid fa-plus"></i>
+                                    <span>สร้างงานใหม่</span>
+                                </button>
                             </div>
 
-                            <form id="settings-form" onsubmit="saveActivity(event)" class="space-y-4">
-                                <input type="hidden" id="setting-act-id">
-                                <div>
-                                    <label class="block text-xs font-medium text-gray-600 mb-1">ชื่อหัวข้อ / กิจกรรม</label>
-                                    <input type="text" id="setting-topic" required class="w-full p-2 border border-gray-300 rounded-lg text-sm focus:ring-indigo-500 focus:border-indigo-500">
-                                </div>
-                                <div class="grid grid-cols-2 gap-3">
-                                    <div>
-                                        <label class="block text-xs font-medium text-gray-600 mb-1">วันเริ่มต้น</label>
-                                        <input type="date" id="setting-start" class="w-full p-2 border border-gray-300 rounded-lg text-xs focus:ring-indigo-500 focus:border-indigo-500">
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-medium text-gray-600 mb-1">วันสิ้นสุด</label>
-                                        <input type="date" id="setting-end" class="w-full p-2 border border-gray-300 rounded-lg text-xs focus:ring-indigo-500 focus:border-indigo-500">
-                                    </div>
-                                </div>
-                                
-                                <!-- Participant Selection -->
-                                <div class="mt-3">
-                                    <label class="block text-xs font-medium text-gray-600 mb-1">ผู้เข้าร่วมกิจกรรม</label>
-                                    <div class="flex gap-2 mb-2">
-                                        <button type="button" onclick="selectAllParticipants(true)" class="text-[11px] bg-gray-200 text-gray-700 px-2 py-1 rounded hover:bg-gray-300 transition-colors">เลือกทั้งหมด</button>
-                                        <button type="button" onclick="selectAllParticipants(false)" class="text-[11px] bg-gray-200 text-gray-700 px-2 py-1 rounded hover:bg-gray-300 transition-colors">เอาออกทั้งหมด</button>
-                                    </div>
-                                    <div id="participant-checkboxes" class="max-h-36 overflow-y-auto border border-gray-300 rounded-lg p-2 text-xs space-y-1 bg-white custom-scrollbar">
-                                        <!-- Populated via JS -->
-                                    </div>
-                                </div>
+                            <!-- Dual Category Tabs: กิจกรรมที่ทำอยู่ VS กิจกรรมที่หมดเวลาแล้ว -->
+                            <div class="mb-3.5 bg-gray-200/80 p-1 rounded-xl flex gap-1 text-xs">
+                                <button type="button" id="admin-act-tab-ongoing" onclick="switchAdminActCategory('ongoing')" class="flex-1 py-2 px-3 rounded-lg transition-all bg-white text-indigo-700 shadow-xs flex items-center justify-center gap-2 font-bold">
+                                    <span class="flex h-2 w-2 relative">
+                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                    </span>
+                                    <span>กิจกรรมที่ทำอยู่</span>
+                                    <span id="badge-count-ongoing" class="bg-indigo-100 text-indigo-800 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+                                </button>
+                                <button type="button" id="admin-act-tab-expired" onclick="switchAdminActCategory('expired')" class="flex-1 py-2 px-3 rounded-lg transition-all text-gray-600 hover:text-gray-900 flex items-center justify-center gap-2 font-medium">
+                                    <i class="fa-solid fa-hourglass-end text-rose-500"></i>
+                                    <span>หมดเวลาแล้ว</span>
+                                    <span id="badge-count-expired" class="bg-rose-100 text-rose-800 text-xs px-2 py-0.5 rounded-full font-bold">0</span>
+                                </button>
+                            </div>
 
-                                <div class="flex flex-col gap-2 pt-2">
-                                    <div class="flex gap-2">
-                                        <button type="submit" class="flex-1 bg-gray-800 text-white text-xs py-2 rounded-lg hover:bg-gray-900 transition-colors font-medium">
-                                            บันทึกกิจกรรม
-                                        </button>
-                                        <button type="button" onclick="openDeleteActivityModal()" id="btn-delete-activity" class="bg-red-100 text-red-700 border border-red-300 text-xs py-2 px-3 rounded-lg hover:bg-red-200 transition-colors hidden" title="ลบกิจกรรม">
-                                            <i class="fa-solid fa-trash"></i> ลบ
+                            <!-- Category 1 Container: Ongoing Activities -->
+                            <div id="admin-container-ongoing" class="mb-4">
+                                <div id="admin-list-ongoing" class="max-h-64 overflow-y-auto divide-y divide-gray-100 custom-scrollbar border border-indigo-100 rounded-xl bg-white shadow-xs">
+                                    <!-- Populated dynamically via JS -->
+                                </div>
+                            </div>
+
+                            <!-- Category 2 Container: Expired Activities -->
+                            <div id="admin-container-expired" class="mb-4 hidden">
+                                <div id="admin-list-expired" class="max-h-64 overflow-y-auto divide-y divide-gray-100 custom-scrollbar border border-rose-100 rounded-xl bg-white shadow-xs">
+                                    <!-- Populated dynamically via JS -->
+                                </div>
+                            </div>
+
+                            <!-- Form Header & Activity Edit Form (Collapsible / Dropdown Style) -->
+                            <div class="pt-3 border-t border-gray-200">
+                                <button type="button" onclick="toggleActivityFormDrawer()" class="w-full flex items-center justify-between p-3.5 bg-white hover:bg-indigo-50/50 rounded-xl border border-gray-200 text-left transition-all shadow-xs group">
+                                    <div class="flex items-center gap-3">
+                                        <span class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </span>
+                                        <div>
+                                            <div id="admin-form-header-title" class="text-xs md:text-sm font-bold text-gray-800">
+                                                สร้าง / แก้ไขรายละเอียดกิจกรรม
+                                            </div>
+                                            <div id="admin-form-header-sub" class="text-xs text-gray-500">
+                                                คลิกเพื่อเปิด/ปิดแบบฟอร์ม
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span id="admin-form-status-badge" class="text-xs bg-gray-100 text-gray-600 px-2.5 py-0.5 rounded-full font-medium">
+                                            คลิกเพื่อเปิด
+                                        </span>
+                                        <i id="admin-form-chevron" class="fa-solid fa-chevron-down text-gray-400 text-xs transition-transform duration-200"></i>
+                                    </div>
+                                </button>
+
+                                <!-- Collapsible Form Drawer (Hidden by default to save space) -->
+                                <div id="admin-form-drawer" class="hidden mt-3 p-4 bg-white rounded-xl border border-indigo-100 shadow-sm space-y-3.5">
+                                    <div class="flex items-center justify-between pb-2 border-b border-gray-100">
+                                        <span class="text-xs font-semibold text-gray-600">เลือกรายการที่ต้องการแก้ไข:</span>
+                                        <button type="button" onclick="toggleActivityFormDrawer(false)" class="text-xs text-gray-400 hover:text-gray-700 p-1">
+                                            <i class="fa-solid fa-xmark mr-1"></i>ย่อเก็บ
                                         </button>
                                     </div>
-                                    <button type="button" onclick="setAsDefaultActivity()" id="btn-set-default" class="w-full bg-indigo-100 text-indigo-700 border border-indigo-300 text-xs py-2 rounded-lg hover:bg-indigo-200 transition-colors font-medium">
-                                        ตั้งเป็นค่าเริ่มต้น
-                                    </button>
+                                    <select id="admin-activity-select" onchange="changeAdminActivity()" class="w-full p-2.5 text-xs border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50 font-medium">
+                                        <option value="new" class="text-indigo-600 font-semibold">+ สร้างกิจกรรมใหม่ (Create New)</option>
+                                    </select>
+
+                                    <form id="settings-form" onsubmit="saveActivity(event)" class="space-y-3.5">
+                                        <input type="hidden" id="setting-act-id">
+                                        <div>
+                                            <label class="block text-xs font-semibold text-gray-700 mb-1">ชื่อหัวข้อ / กิจกรรม</label>
+                                            <input type="text" id="setting-topic" required class="w-full p-2.5 border border-gray-300 rounded-lg text-xs md:text-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold text-gray-700 mb-1"><i class="fa-regular fa-comment-dots text-indigo-500 mr-1"></i> หมายเหตุ (Remark) แสดงในการ์ด</label>
+                                            <input type="text" id="setting-remark" placeholder="เช่น ห้องประชุม 3, ทำผ่านระบบออนไลน์, ด่วน" class="w-full p-2.5 border border-gray-300 rounded-lg text-xs focus:ring-indigo-500 focus:border-indigo-500 bg-white">
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <div>
+                                                <label class="block text-xs font-semibold text-gray-700 mb-1">วันเริ่มต้น</label>
+                                                <input type="date" id="setting-start" class="w-full p-2 border border-gray-300 rounded-lg text-xs focus:ring-indigo-500 focus:border-indigo-500">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold text-gray-700 mb-1">วันสิ้นสุด</label>
+                                                <input type="date" id="setting-end" class="w-full p-2 border border-gray-300 rounded-lg text-xs focus:ring-indigo-500 focus:border-indigo-500">
+                                            </div>
+                                        </div>
+
+                                        <!-- Specific Time Expiration Option -->
+                                        <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 text-xs space-y-2">
+                                            <label class="flex items-center space-x-2 cursor-pointer font-medium text-gray-700">
+                                                <input type="checkbox" id="setting-has-end-time" onchange="toggleEndTimeInput()" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                                <span><i class="fa-regular fa-clock text-indigo-500 mr-1"></i> ระบุเวลาสิ้นสุดกิจกรรม</span>
+                                            </label>
+                                            <div id="end-time-container" class="hidden pl-6">
+                                                <label class="block text-xs text-gray-500 mb-1">เวลาที่หมดเขต (เช่น 16:30 น.)</label>
+                                                <input type="time" id="setting-end-time" class="w-full p-2 border border-gray-300 rounded-lg text-xs focus:ring-indigo-500 bg-white">
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Participant Selection -->
+                                        <div class="mt-2">
+                                            <label class="block text-xs font-semibold text-gray-700 mb-1">ผู้เข้าร่วมกิจกรรม</label>
+                                            <div class="flex gap-2 mb-2">
+                                                <button type="button" onclick="selectAllParticipants(true)" class="text-xs bg-gray-200 text-gray-700 px-2.5 py-1 rounded hover:bg-gray-300 transition-colors">เลือกทั้งหมด</button>
+                                                <button type="button" onclick="selectAllParticipants(false)" class="text-xs bg-gray-200 text-gray-700 px-2.5 py-1 rounded hover:bg-gray-300 transition-colors">เอาออกทั้งหมด</button>
+                                            </div>
+                                            <div id="participant-checkboxes" class="max-h-40 overflow-y-auto border border-gray-300 rounded-lg p-2 text-xs space-y-1 bg-white custom-scrollbar">
+                                                <!-- Populated via JS -->
+                                            </div>
+                                        </div>
+
+                                        <div class="flex flex-col gap-2 pt-2">
+                                            <div class="flex gap-2">
+                                                <button type="submit" class="flex-1 bg-indigo-600 text-white text-xs md:text-sm py-2.5 rounded-lg hover:bg-indigo-700 transition-colors font-semibold shadow-xs">
+                                                    <i class="fa-solid fa-floppy-disk mr-1"></i> บันทึกกิจกรรม
+                                                </button>
+                                                <button type="button" onclick="openDeleteActivityModal()" id="btn-delete-activity" class="bg-red-100 text-red-700 border border-red-300 text-xs py-2.5 px-3 rounded-lg hover:bg-red-200 transition-colors hidden" title="ลบกิจกรรม">
+                                                    <i class="fa-solid fa-trash"></i> ลบ
+                                                </button>
+                                            </div>
+                                            <button type="button" onclick="setAsDefaultActivity()" id="btn-set-default" class="w-full bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs py-2 rounded-lg hover:bg-indigo-100 transition-colors font-medium">
+                                                ตั้งเป็นค่าเริ่มต้น
+                                            </button>
+                                        </div>
+                                    </form>
                                 </div>
-                            </form>
+                            </div>
                         </div>
 
-                        <!-- 2. Employee Management -->
-                        <div class="bg-gray-50 p-5 rounded-xl border border-gray-200 shadow-sm flex flex-col h-[380px]">
-                            <h3 class="text-base font-semibold mb-4 text-gray-800 border-b pb-2 flex justify-between items-center">
-                                <span><i class="fa-solid fa-users text-indigo-500 mr-2"></i> พนักงาน</span>
-                                <span id="emp-count-badge" class="bg-indigo-100 text-indigo-800 text-xs font-bold px-2 py-1 rounded-full">0</span>
+                        <!-- Employee List Section -->
+                        <div class="bg-gray-50/90 p-5 rounded-2xl border border-gray-200 shadow-xs flex flex-col h-[380px]">
+                            <h3 class="text-base font-bold mb-4 text-gray-800 border-b pb-2 flex justify-between items-center">
+                                <span><i class="fa-solid fa-users text-indigo-500 mr-2"></i> รายชื่อพนักงาน</span>
+                                <span id="emp-count-badge" class="bg-indigo-100 text-indigo-800 text-xs font-bold px-2.5 py-1 rounded-full">0</span>
                             </h3>
                             
                             <form id="add-emp-form" onsubmit="addEmployee(event)" class="mb-4 flex flex-col gap-2">
-                                <input type="text" id="new-emp-name" placeholder="ชื่อ-นามสกุล" required class="w-full p-2 text-xs border border-gray-300 rounded-lg focus:ring-indigo-500">
+                                <input type="text" id="new-emp-name" placeholder="ชื่อ-นามสกุล" required class="w-full p-2.5 text-xs border border-gray-300 rounded-lg focus:ring-indigo-500 bg-white">
                                 <div class="flex gap-2">
-                                    <input type="text" id="new-emp-dept" placeholder="แผนก" required class="w-full p-2 text-xs border border-gray-300 rounded-lg focus:ring-indigo-500">
-                                    <button type="submit" class="bg-indigo-600 text-white px-3 py-2 rounded-lg hover:bg-indigo-700 transition-colors text-xs font-medium"><i class="fa-solid fa-plus"></i></button>
+                                    <input type="text" id="new-emp-dept" placeholder="แผนก" required class="w-full p-2.5 text-xs border border-gray-300 rounded-lg focus:ring-indigo-500 bg-white">
+                                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2.5 rounded-lg hover:bg-indigo-700 transition-colors text-xs font-semibold shadow-xs flex items-center gap-1">
+                                        <i class="fa-solid fa-plus"></i> เพิ่ม
+                                    </button>
                                 </div>
                             </form>
 
-                            <div id="employee-list" class="flex-grow overflow-y-auto custom-scrollbar bg-white border border-gray-200 rounded-lg divide-y divide-gray-100">
+                            <div id="employee-list" class="flex-grow overflow-y-auto custom-scrollbar bg-white border border-gray-200 rounded-xl divide-y divide-gray-100">
                                 <!-- Populated via JS -->
                             </div>
                         </div>
                     </div>
 
-                    <!-- Right Column: Report & Data -->
-                    <div class="lg:col-span-2">
-                        <div class="bg-white p-0 rounded-xl flex flex-col h-full">
-                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-4 border-b pb-4 gap-4">
-                                <div>
-                                    <h3 class="text-lg font-bold text-gray-800"><i class="fa-solid fa-chart-bar text-indigo-500 mr-2"></i> รายงานสถานะ</h3>
-                                    <div class="mt-2 flex items-center gap-2">
-                                        <span class="text-xs text-gray-600">ตัวกรอง:</span>
-                                        <select id="report-activity-select" onchange="renderReport()" class="p-1.5 text-xs border border-gray-300 rounded-lg bg-gray-50 focus:ring-indigo-500 font-medium">
+                    <!-- Right Column: Status Reports & Summary Cards (lg:col-span-7) -->
+                    <div class="lg:col-span-7">
+                        <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-xs flex flex-col h-full">
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-5 border-b pb-4 gap-4">
+                                <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                                    <h3 class="text-lg font-bold text-gray-800 flex items-center">
+                                        <i class="fa-solid fa-chart-bar text-indigo-500 mr-2"></i> รายงานสถานะ
+                                    </h3>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-xs text-gray-500 font-medium">ตัวกรอง:</span>
+                                        <select id="report-activity-select" onchange="renderReport()" class="p-2 text-xs border border-gray-300 rounded-lg bg-gray-50 focus:ring-indigo-500 font-medium min-w-[180px]">
                                             <option value="all">-- ทุกกิจกรรมรวมกัน --</option>
                                         </select>
                                     </div>
                                 </div>
-                                <div class="flex gap-2 flex-wrap">
-                                    <button onclick="logoutAdmin()" class="text-xs bg-gray-100 text-gray-600 border border-gray-300 px-3 py-2 rounded-lg hover:bg-gray-200" title="Lock System"><i class="fa-solid fa-lock"></i></button>
-                                    <button onclick="fetchCloudData(true)" class="text-xs bg-blue-50 text-blue-600 border border-blue-200 px-3 py-2 rounded-lg hover:bg-blue-100 font-medium"><i class="fa-solid fa-rotate mr-1"></i> รีเฟรช</button>
-                                    <button onclick="exportToCSV()" class="text-xs bg-emerald-600 text-white px-3 py-2 rounded-lg shadow-sm hover:bg-emerald-700 font-medium"><i class="fa-solid fa-file-csv mr-1"></i> โหลด CSV</button>
+                                <div class="flex gap-2 flex-wrap items-center">
+                                    <button onclick="logoutAdmin()" class="text-xs bg-gray-100 text-gray-600 border border-gray-300 px-3 py-2 rounded-lg hover:bg-gray-200 transition-colors" title="Lock System">
+                                        <i class="fa-solid fa-lock"></i>
+                                    </button>
+                                    <button onclick="fetchCloudData(true)" class="text-xs bg-blue-50 text-blue-600 border border-blue-200 px-3 py-2 rounded-lg hover:bg-blue-100 font-semibold transition-colors">
+                                        <i class="fa-solid fa-rotate mr-1"></i> รีเฟรช
+                                    </button>
+                                    <button onclick="exportToCSV()" class="text-xs bg-emerald-600 text-white px-3 py-2 rounded-lg shadow-xs hover:bg-emerald-700 font-semibold transition-colors flex items-center gap-1">
+                                        <i class="fa-solid fa-file-csv"></i> โหลด CSV
+                                    </button>
                                 </div>
                             </div>
 
                             <!-- Summary Cards -->
-                            <div class="grid grid-cols-3 gap-3 mb-6">
-                                <div class="bg-indigo-50 rounded-xl p-3 md:p-4 border border-indigo-100 text-center">
-                                    <div class="text-indigo-600 text-[11px] md:text-xs font-bold uppercase tracking-wide mb-1">เป้าหมาย (คน)</div>
-                                    <div id="stat-total" class="text-xl md:text-2xl font-bold text-indigo-900">0</div>
+                            <div class="grid grid-cols-3 gap-3 md:gap-4 mb-6">
+                                <div class="bg-indigo-50/80 rounded-xl p-3.5 md:p-4 border border-indigo-100 text-center shadow-xs">
+                                    <div class="text-indigo-600 text-xs font-bold uppercase tracking-wider mb-1">เป้าหมาย (คน)</div>
+                                    <div id="stat-total" class="text-2xl md:text-3xl font-extrabold text-indigo-900">0</div>
                                 </div>
-                                <div class="bg-emerald-50 rounded-xl p-3 md:p-4 border border-emerald-100 text-center">
-                                    <div class="text-emerald-600 text-[11px] md:text-xs font-bold uppercase tracking-wide mb-1">ทำแล้ว</div>
-                                    <div id="stat-done" class="text-xl md:text-2xl font-bold text-emerald-900">0</div>
+                                <div class="bg-emerald-50/80 rounded-xl p-3.5 md:p-4 border border-emerald-100 text-center shadow-xs">
+                                    <div class="text-emerald-600 text-xs font-bold uppercase tracking-wider mb-1">ทำแล้ว</div>
+                                    <div id="stat-done" class="text-2xl md:text-3xl font-extrabold text-emerald-900">0</div>
                                 </div>
-                                <div class="bg-amber-50 rounded-xl p-3 md:p-4 border border-amber-100 text-center">
-                                    <div class="text-amber-600 text-[11px] md:text-xs font-bold uppercase tracking-wide mb-1">ค้างทำ</div>
-                                    <div id="stat-pending" class="text-xl md:text-2xl font-bold text-amber-900">0</div>
+                                <div class="bg-amber-50/80 rounded-xl p-3.5 md:p-4 border border-amber-100 text-center shadow-xs">
+                                    <div class="text-amber-600 text-xs font-bold uppercase tracking-wider mb-1">ค้างทำ</div>
+                                    <div id="stat-pending" class="text-2xl md:text-3xl font-extrabold text-amber-900">0</div>
                                 </div>
                             </div>
 
-                            <!-- Data Table with Admin Edit Action -->
-                            <div class="overflow-x-auto border border-gray-200 rounded-xl shadow-sm">
+                            <!-- Data Table with spacious paddings -->
+                            <div class="overflow-x-auto border border-gray-200 rounded-xl shadow-xs">
                                 <table class="min-w-full divide-y divide-gray-200 text-xs md:text-sm">
-                                    <thead class="bg-gray-50">
+                                    <thead class="bg-gray-50/90 text-gray-600 uppercase text-[11px] font-bold tracking-wider">
                                         <tr>
-                                            <th class="px-4 py-3 text-left font-semibold text-gray-600">ชื่อพนักงาน</th>
-                                            <th class="px-4 py-3 text-left font-semibold text-gray-600">แผนก</th>
-                                            <th class="px-4 py-3 text-left font-semibold text-gray-600 hidden md:table-cell">กิจกรรม</th>
-                                            <th class="px-4 py-3 text-center font-semibold text-gray-600">สถานะ</th>
-                                            <th class="px-4 py-3 text-center font-semibold text-gray-600">แก้ไข (Admin)</th>
+                                            <th class="px-5 py-3.5 text-left">ชื่อพนักงาน</th>
+                                            <th class="px-5 py-3.5 text-left">แผนก</th>
+                                            <th class="px-5 py-3.5 text-left hidden md:table-cell">กิจกรรม</th>
+                                            <th class="px-5 py-3.5 text-center">สถานะ</th>
+                                            <th class="px-5 py-3.5 text-center">แก้ไข (Admin)</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="report-table-body" class="bg-white divide-y divide-gray-200">
+                                    <tbody id="report-table-body" class="bg-white divide-y divide-gray-100">
                                         <!-- Populated via JS -->
                                     </tbody>
                                 </table>
@@ -296,30 +438,47 @@
                     </div>
                 </div>
 
-                <!-- SUB-VIEW 2: ADMIN SECURITY & CONNECTION SETTINGS -->
-                <div id="admin-subview-settings" class="hidden max-w-xl mx-auto w-full bg-indigo-50/70 p-6 rounded-2xl border border-indigo-200 shadow-sm animate-[slideInRight_0.2s_ease-out]">
+                <!-- SUB-VIEW 2: SETTINGS VIEW -->
+                <div id="admin-subview-settings" class="hidden max-w-xl mx-auto w-full bg-indigo-50/70 p-6 md:p-8 rounded-2xl border border-indigo-200 shadow-sm animate-[slideInRight_0.2s_ease-out]">
                     <h3 class="text-base font-bold mb-4 text-indigo-900 border-b border-indigo-200 pb-2 flex justify-between items-center">
                         <span><i class="fa-solid fa-sliders text-indigo-600 mr-2"></i> ตั้งค่าผู้ดูแลระบบ & การ์ดเชื่อมต่อ</span>
                     </h3>
+
+                    <!-- Quick Sheet Tools Card -->
+                    <div class="mb-5 p-4 bg-white rounded-xl border border-indigo-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                        <div>
+                            <div class="text-xs md:text-sm font-bold text-gray-800 flex items-center gap-1.5">
+                                <i class="fa-solid fa-wand-magic-sparkles text-indigo-600"></i> เครื่องมือจัดการโครงสร้างชีต
+                            </div>
+                            <div class="text-xs text-gray-500 mt-0.5">
+                                กดเพื่อเพิ่มคอลัมน์ Remark (คอลัมน์ J) ลงใน Google Sheets อัตโนมัติ
+                            </div>
+                        </div>
+                        <button type="button" onclick="runUpgradeColumns()" id="btn-upgrade-cols" class="w-full sm:w-auto px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-300 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-2xs">
+                            <i class="fa-solid fa-table-columns"></i>
+                            <span>เพิ่มคอลัมน์ Remark</span>
+                        </button>
+                    </div>
+
                     <form id="admin-settings-form" onsubmit="saveAdminSettings(event)" class="space-y-4">
                         <div>
                             <label class="block text-xs font-semibold text-gray-700 mb-1"><i class="fa-solid fa-link text-indigo-500 mr-1"></i> Google Apps Script Web App URL</label>
-                            <input type="text" id="setting-script-url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full p-2.5 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white shadow-sm">
-                            <p class="text-[11px] text-gray-500 mt-1">URL สำหรับเชื่อมต่อฐานข้อมูล Google Sheets</p>
+                            <input type="text" id="setting-script-url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full p-2.5 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white shadow-xs">
+                            <p class="text-xs text-gray-500 mt-1">URL สำหรับเชื่อมต่อฐานข้อมูล Google Sheets</p>
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-700 mb-1"><i class="fa-solid fa-envelope text-indigo-500 mr-1"></i> Email ผู้ดูแลระบบ 1 (รับแจ้งเตือนเมื่อทำกิจกรรมครบ)</label>
-                            <input type="email" id="setting-admin-email1" placeholder="admin1@example.com" class="w-full p-2.5 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white shadow-sm">
+                            <input type="email" id="setting-admin-email1" placeholder="admin1@example.com" class="w-full p-2.5 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white shadow-xs">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-700 mb-1"><i class="fa-solid fa-envelope text-indigo-500 mr-1"></i> Email ผู้ดูแลระบบ 2 (สำรอง)</label>
-                            <input type="email" id="setting-admin-email2" placeholder="admin2@example.com" class="w-full p-2.5 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white shadow-sm">
+                            <input type="email" id="setting-admin-email2" placeholder="admin2@example.com" class="w-full p-2.5 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white shadow-xs">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-700 mb-1"><i class="fa-solid fa-lock text-indigo-500 mr-1"></i> รหัสผ่านเข้าสู่ระบบ Admin ใหม่</label>
-                            <input type="password" id="setting-admin-pass" placeholder="เปลี่ยนรหัสผ่านใหม่" class="w-full p-2.5 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white shadow-sm">
+                            <input type="password" id="setting-admin-pass" placeholder="เปลี่ยนรหัสผ่านใหม่" class="w-full p-2.5 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white shadow-xs">
                         </div>
-                        <button type="submit" class="w-full bg-indigo-600 text-white text-xs py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors shadow-sm mt-2 flex items-center justify-center gap-2">
+                        <button type="submit" class="w-full bg-indigo-600 text-white text-xs md:text-sm py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors shadow-xs mt-2 flex items-center justify-center gap-2">
                             <i class="fa-solid fa-floppy-disk"></i> บันทึกการตั้งค่า Admin
                         </button>
                     </form>
@@ -329,29 +488,35 @@
         </section>
     </main>
 
-    <!-- Modal Confirmation -->
-    <div id="delete-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-xl shadow-xl max-w-sm w-full overflow-hidden">
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-xs">
+        <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full overflow-hidden">
             <div class="p-6">
                 <div class="flex items-center justify-center w-12 h-12 rounded-full bg-red-100 mb-4 mx-auto">
                     <i class="fa-solid fa-triangle-exclamation text-red-600 text-xl"></i>
                 </div>
                 <h3 id="delete-modal-title" class="text-base font-bold text-gray-900 text-center mb-2">ยืนยันการลบ</h3>
-                <p id="delete-modal-msg" class="text-xs text-gray-500 text-center mb-6">คุณแน่ใจหรือไม่ที่จะลบรายการนี้?</p>
+                <p id="delete-modal-msg" class="text-xs md:text-sm text-gray-500 text-center mb-6">คุณแน่ใจหรือไม่ที่จะลบรายการนี้?</p>
                 <div class="flex gap-3">
-                    <button onclick="closeDeleteModal()" class="flex-1 px-4 py-2 bg-white border border-gray-300 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50">ยกเลิก</button>
-                    <button id="btn-confirm-delete" class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-xs font-medium text-white">ยืนยันลบ</button>
+                    <button onclick="closeDeleteModal()" class="flex-1 px-4 py-2.5 bg-white border border-gray-300 rounded-xl text-xs font-semibold text-gray-700 hover:bg-gray-50">ยกเลิก</button>
+                    <button id="btn-confirm-delete" class="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 rounded-xl text-xs font-semibold text-white shadow-xs">ยืนยันลบ</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Toast Notification Container -->
     <div id="toast-container" class="fixed bottom-5 right-5 flex flex-col gap-2 z-50"></div>
 
     <script>
-        // Google Apps Script Web App Endpoint URL
-        let SCRIPT_URL = localStorage.getItem('smart_checkin_script_url') || 'https://script.google.com/macros/s/AKfycbwJu5WWDfYFY0Q3h_Vc7sXYXrPwd2uW0ejRs2S-uNfEbbqUJ5BY1zYS0_SSoVhlo_4A/exec';
+        const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby6OzZNsBRJiHAKNKFJH7oUKDZgpEPSAFOJMYRIIiufrniMekAeUlc252rEKA4D60iu/exec';
+        let savedUrl = localStorage.getItem('smart_checkin_script_url');
+
+        if (!savedUrl || savedUrl.includes('AKfycbz24FXoqdgeqmtgSCSpYLgsUXi1Y3EW5MNvgC6BmIF6KM1b8beeeIBa7P4aL5BKJFI5')) {
+            savedUrl = DEFAULT_SCRIPT_URL;
+            localStorage.setItem('smart_checkin_script_url', DEFAULT_SCRIPT_URL);
+        }
+
+        let SCRIPT_URL = savedUrl;
         
         let activities = [];
         let employees = [];
@@ -360,12 +525,53 @@
         let adminPassword = "1234";
         let adminEmail1 = "";
         let adminEmail2 = "";
+        let timerInterval = null;
+        let currentAdminActCategory = 'ongoing'; // 'ongoing' หรือ 'expired'
 
         window.onload = async () => {
             const scriptUrlInput = document.getElementById('setting-script-url');
             if (scriptUrlInput) scriptUrlInput.value = SCRIPT_URL;
             await fetchCloudData();
+            
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(updateCountdownTimer, 1000);
         };
+
+        // ฟังก์ชันแปลงวันที่และเวลาสิ้นสุดกิจกรรมอย่างแม่นยำ ป้องกัน Invalid Date และ NaN
+        function getActTargetDate(act) {
+            if (!act || !act.endDate) return null;
+
+            let timeStr = (act.hasEndTime && act.endTime) ? String(act.endTime).trim() : '23:59:59';
+            if (timeStr.length === 5) timeStr += ':00';
+
+            const rawDate = String(act.endDate).trim();
+            let d = new Date(rawDate);
+
+            // หาก Date ตรง ๆ ไม่ผ่าน ให้ลองตัดแยกตาม Pattern วันที่
+            if (isNaN(d.getTime())) {
+                const isoMatch = rawDate.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
+                if (isoMatch) {
+                    d = new Date(parseInt(isoMatch[1], 10), parseInt(isoMatch[2], 10) - 1, parseInt(isoMatch[3], 10));
+                } else {
+                    const dmyMatch = rawDate.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})/);
+                    if (dmyMatch) {
+                        let year = parseInt(dmyMatch[3], 10);
+                        if (year > 2400) year -= 543; // รองรับปี พ.ศ.
+                        d = new Date(year, parseInt(dmyMatch[2], 10) - 1, parseInt(dmyMatch[1], 10));
+                    }
+                }
+            }
+
+            if (isNaN(d.getTime())) return null;
+
+            const timeParts = timeStr.split(':');
+            const hh = parseInt(timeParts[0], 10) || 0;
+            const mm = parseInt(timeParts[1], 10) || 0;
+            const ss = parseInt(timeParts[2], 10) || 0;
+
+            const target = new Date(d.getFullYear(), d.getMonth(), d.getDate(), hh, mm, ss);
+            return isNaN(target.getTime()) ? null : target;
+        }
 
         async function fetchCloudData(showNotify = false) {
             if (showNotify) document.getElementById('sync-status').classList.remove('hidden');
@@ -394,8 +600,12 @@
                             topic: 'อบรมแบบทดสอบประจำปี',
                             startDate: new Date().toISOString().split('T')[0],
                             endDate: new Date().toISOString().split('T')[0],
+                            endTime: '23:59',
+                            hasEndTime: false,
                             isDefault: true,
-                            participants: 'ALL'
+                            participants: 'ALL',
+                            isActive: true,
+                            remark: ''
                         }];
                     }
 
@@ -410,8 +620,12 @@
                         topic: 'อบรมแบบทดสอบประจำปี',
                         startDate: new Date().toISOString().split('T')[0],
                         endDate: new Date().toISOString().split('T')[0],
+                        endTime: '23:59',
+                        hasEndTime: false,
                         isDefault: true,
-                        participants: 'ALL'
+                        participants: 'ALL',
+                        isActive: true,
+                        remark: ''
                     }];
                     updateAllViews();
                 }
@@ -453,6 +667,29 @@
             showToast('บันทึกการตั้งค่าเรียบร้อยแล้ว', 'success');
         }
 
+        async function runUpgradeColumns() {
+            const btn = document.getElementById('btn-upgrade-cols');
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังอัปเดตชีต...';
+            }
+
+            showToast('กำลังสั่งให้ระบบเพิ่มคอลัมน์ Remark ใน Google Sheet...', 'success');
+            
+            try {
+                await sendToCloud({ action: 'upgradeColumns' });
+                showToast('ส่งคำสั่งอัปเดตชีตสำเร็จ! กรุณาตรวจสอบแท็บ Activities ใน Google Sheet', 'success');
+            } catch (err) {
+                console.error(err);
+                showToast('เกิดข้อผิดพลาดในการเชื่อมต่อ', 'error');
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-table-columns"></i> <span>เพิ่มคอลัมน์ Remark</span>';
+                }
+            }
+        }
+
         async function handleForgotPassword() {
             if (!adminEmail1 && !adminEmail2) {
                 showToast('ยังไม่ได้ตั้งค่า Email Admin ในระบบ', 'error');
@@ -476,88 +713,596 @@
             }
         }
 
-        function updateAllViews() {
-            renderActivityDropdowns();
-            changeUserActivity();
-            renderEmployeeListAdmin();
-            renderReport();
-        }
-
         function renderActivityDropdowns() {
-            const userSel = document.getElementById('user-activity-select');
+            const userActInput = document.getElementById('user-activity-select');
             const adminSel = document.getElementById('admin-activity-select');
             const reportSel = document.getElementById('report-activity-select');
             
-            const currUserSel = userSel.value;
-            const currAdminSel = adminSel.value;
-            const currReportSel = reportSel.value;
+            const currAdminSel = adminSel ? adminSel.value : 'new';
+            const currReportSel = reportSel ? reportSel.value : 'all';
 
-            userSel.innerHTML = '';
-            adminSel.innerHTML = '<option value="new" class="text-indigo-600 font-semibold">+ สร้างกิจกรรมใหม่ (Create New)</option>';
-            reportSel.innerHTML = '<option value="all">-- ทุกกิจกรรมรวมกัน --</option>';
+            if (adminSel) {
+                adminSel.innerHTML = '<option value="new" class="text-indigo-600 font-semibold">+ สร้างกิจกรรมใหม่ (Create New)</option>';
+            }
+            if (reportSel) {
+                reportSel.innerHTML = '<option value="all">-- ทุกกิจกรรมรวมกัน --</option>';
+            }
 
             if (activities.length === 0) {
-                userSel.innerHTML = '<option value="" disabled selected>-- ไม่มีกิจกรรม --</option>';
+                if (userActInput) userActInput.value = '';
+                renderMiniDashboard();
                 return;
             }
 
-            let defaultId = activities[0].id;
+            // Find ongoing activities (within time deadline)
+            const now = new Date();
+            const ongoingActs = activities.filter(a => {
+                const targetDate = getActTargetDate(a);
+                return !targetDate || now < targetDate;
+            });
+
+            const defaultAct = ongoingActs.find(a => a.isDefault) || ongoingActs[0] || activities.find(a => a.isDefault) || activities[0];
+            
+            if (userActInput) {
+                const currentVal = userActInput.value;
+                if (!currentVal || !ongoingActs.some(a => a.id === currentVal)) {
+                    userActInput.value = defaultAct ? defaultAct.id : '';
+                }
+            }
 
             activities.forEach(act => {
                 const isDefStr = act.isDefault ? ' (ค่าเริ่มต้น)' : '';
-                if (act.isDefault) defaultId = act.id;
-
-                userSel.add(new Option(act.topic + isDefStr, act.id));
-                adminSel.add(new Option(act.topic + isDefStr, act.id));
-                reportSel.add(new Option(act.topic, act.id));
+                const targetDate = getActTargetDate(act);
+                const isExpired = targetDate && now >= targetDate;
+                const statusStr = isExpired ? ' [หมดเวลา]' : '';
+                
+                if (adminSel) {
+                    adminSel.add(new Option(act.topic + isDefStr + statusStr, act.id));
+                }
+                if (reportSel) {
+                    reportSel.add(new Option(act.topic + statusStr, act.id));
+                }
             });
 
-            const targetUserVal = currUserSel && activities.some(a => a.id === currUserSel) ? currUserSel : defaultId;
-            userSel.value = targetUserVal;
-            
-            if (currAdminSel && (currAdminSel === 'new' || activities.some(a => a.id === currAdminSel))) {
-                adminSel.value = currAdminSel;
-            } else {
-                adminSel.value = 'new';
+            if (adminSel) {
+                if (currAdminSel && (currAdminSel === 'new' || activities.some(a => a.id === currAdminSel))) {
+                    adminSel.value = currAdminSel;
+                } else {
+                    adminSel.value = 'new';
+                }
+                changeAdminActivity();
             }
 
-            if (currReportSel && (currReportSel === 'all' || activities.some(a => a.id === currReportSel))) {
-                reportSel.value = currReportSel;
-            } else {
-                reportSel.value = 'all';
+            if (reportSel) {
+                if (currReportSel && (currReportSel === 'all' || activities.some(a => a.id === currReportSel))) {
+                    reportSel.value = currReportSel;
+                } else {
+                    reportSel.value = 'all';
+                }
             }
-            
-            changeAdminActivity();
+
+            renderMiniDashboard();
+        }
+
+        // Toggle collapsible form drawer in Admin view
+        function toggleActivityFormDrawer(forceOpen = null) {
+            const drawer = document.getElementById('admin-form-drawer');
+            const chevron = document.getElementById('admin-form-chevron');
+            const badge = document.getElementById('admin-form-status-badge');
+            if (!drawer) return;
+
+            const shouldOpen = forceOpen !== null ? forceOpen : drawer.classList.contains('hidden');
+            if (shouldOpen) {
+                drawer.classList.remove('hidden');
+                if (chevron) chevron.style.transform = 'rotate(180deg)';
+                if (badge) {
+                    badge.textContent = 'กำลังเปิดฟอร์ม';
+                    badge.className = 'text-xs bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full font-semibold';
+                }
+            } else {
+                drawer.classList.add('hidden');
+                if (chevron) chevron.style.transform = 'rotate(0deg)';
+                if (badge) {
+                    badge.textContent = 'คลิกเพื่อเปิด';
+                    badge.className = 'text-xs bg-gray-100 text-gray-600 px-2.5 py-0.5 rounded-full font-medium';
+                }
+            }
         }
 
         function changeUserActivity() {
-            const userSel = document.getElementById('user-activity-select');
-            const actId = userSel.value;
+            const userActInput = document.getElementById('user-activity-select');
+            const actId = userActInput ? userActInput.value : '';
             const act = activities.find(a => a.id === actId);
-            
+
             const formatDt = (d) => {
                 if (!d) return '-';
                 const dateObj = new Date(d);
                 return isNaN(dateObj) ? d : dateObj.toLocaleDateString('th-TH');
             };
 
-            document.getElementById('display-date-start').innerHTML = `<i class="fa-regular fa-calendar mr-1"></i> เริ่ม: ${act ? formatDt(act.startDate) : '-'}`;
-            document.getElementById('display-date-end').innerHTML = `<i class="fa-regular fa-calendar-check mr-1"></i> สิ้นสุด: ${act ? formatDt(act.endDate) : '-'}`;
-            
+            const timeSuffix = (act && act.hasEndTime && act.endTime) ? ` (${act.endTime} น.)` : '';
+
+            const topicEl = document.getElementById('current-selected-topic');
+            if (topicEl) {
+                topicEl.textContent = act ? act.topic : '-';
+            }
+
+            const startEl = document.getElementById('display-date-start');
+            if (startEl) {
+                startEl.innerHTML = `<i class="fa-regular fa-calendar mr-1"></i> เริ่ม: ${act ? formatDt(act.startDate) : '-'}`;
+            }
+
+            const endEl = document.getElementById('display-date-end');
+            if (endEl) {
+                endEl.innerHTML = `<i class="fa-regular fa-calendar-check mr-1"></i> สิ้นสุด: ${act ? formatDt(act.endDate) + timeSuffix : '-'}`;
+            }
+
+            updateCountdownTimer();
             renderUserStatusList();
-            renderEmployeeDropdown(); 
+            renderEmployeeDropdown();
+            renderMiniDashboard();
+        }
+
+        function updateCountdownTimer() {
+            const userActInput = document.getElementById('user-activity-select');
+            const actId = userActInput ? userActInput.value : '';
+            const act = activities.find(a => a.id === actId);
+            const timerEl = document.getElementById('countdown-timer');
+            const submitBtn = document.getElementById('btn-submit-checkin');
+            const expiredBanner = document.getElementById('user-expired-banner');
+
+            if (!act || !act.endDate) {
+                if (timerEl) timerEl.textContent = '-- วัน -- ชั่วโมง -- นาที -- วินาที';
+                if (expiredBanner) expiredBanner.classList.add('hidden');
+                return;
+            }
+
+            const targetDateTime = getActTargetDate(act);
+            if (!targetDateTime) {
+                if (timerEl) timerEl.textContent = '-- วัน -- ชั่วโมง -- นาที -- วินาที';
+                if (expiredBanner) expiredBanner.classList.add('hidden');
+                return;
+            }
+
+            const now = new Date();
+            const diff = targetDateTime - now;
+
+            if (diff <= 0) {
+                if (timerEl) timerEl.textContent = '⛔ หมดเวลาลงชื่อเข้าร่วมกิจกรรมนี้แล้ว';
+                if (expiredBanner) expiredBanner.classList.remove('hidden');
+                if (submitBtn) submitBtn.classList.add('hidden');
+            } else {
+                if (expiredBanner) expiredBanner.classList.add('hidden');
+                checkAlreadyDoneUser();
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                const dStr = days > 0 ? `${days} วัน ` : '';
+                const hStr = hours < 10 ? `0${hours}` : hours;
+                const mStr = minutes < 10 ? `0${minutes}` : minutes;
+                const sStr = seconds < 10 ? `0${seconds}` : seconds;
+
+                if (timerEl) {
+                    timerEl.textContent = `${dStr}${hStr} ชม. ${mStr} นาที ${sStr} วินาที`;
+                }
+            }
+        }
+
+        function updateAllViews() {
+            renderActivityDropdowns();
+            renderAdminActivityCategories();
+            changeUserActivity();
+            renderEmployeeListAdmin();
+            renderReport();
+        }
+
+        // สลับหมวดหมู่กิจกรรมในหน้า Admin (กิจกรรมที่ทำอยู่ vs หมดเวลาแล้ว)
+        function switchAdminActCategory(category) {
+            currentAdminActCategory = category;
+            const ongoingBtn = document.getElementById('admin-act-tab-ongoing');
+            const expiredBtn = document.getElementById('admin-act-tab-expired');
+            const ongoingContainer = document.getElementById('admin-container-ongoing');
+            const expiredContainer = document.getElementById('admin-container-expired');
+
+            if (!ongoingBtn || !expiredBtn) return;
+
+            if (category === 'ongoing') {
+                ongoingBtn.className = "flex-1 py-2 px-3 rounded-lg transition-all bg-white text-indigo-700 shadow-xs flex items-center justify-center gap-2 font-bold";
+                expiredBtn.className = "flex-1 py-2 px-3 rounded-lg transition-all text-gray-600 hover:text-gray-900 flex items-center justify-center gap-2 font-medium";
+                ongoingContainer?.classList.remove('hidden');
+                expiredContainer?.classList.add('hidden');
+            } else {
+                ongoingBtn.className = "flex-1 py-2 px-3 rounded-lg transition-all text-gray-600 hover:text-gray-900 flex items-center justify-center gap-2 font-medium";
+                expiredBtn.className = "flex-1 py-2 px-3 rounded-lg transition-all bg-white text-rose-700 shadow-xs flex items-center justify-center gap-2 font-bold";
+                ongoingContainer?.classList.add('hidden');
+                expiredContainer?.classList.remove('hidden');
+            }
+        }
+
+        // ฟังก์ชันแยกหมวดหมู่และแสดงรายการกิจกรรม (Ongoing vs Expired) พร้อมปุ่ม Export CSV
+        function renderAdminActivityCategories() {
+            const ongoingList = document.getElementById('admin-list-ongoing');
+            const expiredList = document.getElementById('admin-list-expired');
+            const badgeOngoing = document.getElementById('badge-count-ongoing');
+            const badgeExpired = document.getElementById('badge-count-expired');
+
+            if (!ongoingList || !expiredList) return;
+
+            const now = new Date();
+            const ongoingActs = [];
+            const expiredActs = [];
+
+            activities.forEach(act => {
+                const targetDate = getActTargetDate(act);
+                const isTimeExpired = targetDate ? (now >= targetDate) : false;
+
+                if (isTimeExpired) {
+                    expiredActs.push({ ...act, isTimeExpired: true });
+                } else {
+                    ongoingActs.push(act);
+                }
+            });
+
+            if (badgeOngoing) badgeOngoing.textContent = ongoingActs.length;
+            if (badgeExpired) badgeExpired.textContent = expiredActs.length;
+
+            // 1. เรนเดอร์หมวด "กิจกรรมที่ทำอยู่"
+            if (ongoingActs.length === 0) {
+                ongoingList.innerHTML = '<div class="text-xs md:text-sm text-gray-400 text-center py-6">ไม่มีกิจกรรมที่กำลังทำอยู่ในขณะนี้</div>';
+            } else {
+                ongoingList.innerHTML = '';
+                ongoingActs.forEach(act => {
+                    const totalTarget = act.participants === 'ALL' || !act.participants 
+                        ? employees.length 
+                        : (Array.isArray(act.participants) ? act.participants.length : 0);
+                    const doneCount = checkIns.filter(c => c.activityId === act.id).length;
+                    const percent = totalTarget > 0 ? Math.round((doneCount / totalTarget) * 100) : 0;
+
+                    const item = document.createElement('div');
+                    item.className = 'p-3.5 flex items-center justify-between gap-3 hover:bg-indigo-50/50 transition-colors';
+                    item.innerHTML = `
+                        <div class="min-w-0 flex-1 pr-2 cursor-pointer" onclick="selectActivityToEdit('${act.id}')">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="text-xs md:text-sm font-bold text-gray-800 truncate" title="${act.topic}">${act.topic}</span>
+                                ${act.isDefault ? '<span class="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">หลัก</span>' : ''}
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-gray-500 mt-1">
+                                <span><i class="fa-regular fa-calendar mr-1"></i>ถึง ${act.endDate || '-'}</span>
+                                <span>•</span>
+                                <span class="text-indigo-600 font-bold">${doneCount}/${totalTarget} คน (${percent}%)</span>
+                            </div>
+                            ${act.remark ? `<div class="text-xs text-amber-700 truncate mt-1 bg-amber-50 px-2 py-0.5 rounded border border-amber-200/50 inline-block"><i class="fa-solid fa-tag text-[10px] mr-1 text-amber-500"></i>${act.remark}</div>` : ''}
+                        </div>
+                        <div class="flex items-center gap-1.5 flex-shrink-0">
+                            <!-- ปุ่ม Export CSV กิจกรรมนี้ -->
+                            <button type="button" onclick="exportActivityCSV('${act.id}')" class="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1" title="ดาวน์โหลด CSV กิจกรรมนี้">
+                                <i class="fa-solid fa-file-csv"></i>
+                                <span class="hidden sm:inline">CSV</span>
+                            </button>
+                            <!-- ปุ่มแก้ไขกิจกรรม -->
+                            <button type="button" onclick="selectActivityToEdit('${act.id}')" class="p-1.5 px-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-lg text-xs font-medium transition-colors" title="แก้ไขกิจกรรมนี้">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <!-- ปุ่มปิดงานก่อนกำหนด -->
+                            <button type="button" onclick="closeActivityNow('${act.id}')" class="px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-lg text-xs font-medium transition-colors" title="ปิดกิจกรรมก่อนกำหนด">
+                                <i class="fa-solid fa-flag-checkered mr-1"></i>ปิดงาน
+                            </button>
+                        </div>
+                    `;
+                    ongoingList.appendChild(item);
+                });
+            }
+
+            // 2. เรนเดอร์หมวด "กิจกรรมที่หมดเวลาแล้ว"
+            if (expiredActs.length === 0) {
+                expiredList.innerHTML = '<div class="text-xs md:text-sm text-gray-400 text-center py-6">ยังไม่มีกิจกรรมที่หมดเวลา</div>';
+            } else {
+                expiredList.innerHTML = '';
+                expiredActs.forEach(act => {
+                    const item = document.createElement('div');
+                    item.className = 'p-3.5 flex items-center justify-between gap-3 hover:bg-rose-50/30 transition-colors bg-gray-50/50';
+                    item.innerHTML = `
+                        <div class="min-w-0 flex-1 pr-2 cursor-pointer" onclick="selectActivityToEdit('${act.id}')">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="text-xs md:text-sm font-semibold text-gray-700 truncate" title="${act.topic}">${act.topic}</span>
+                                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-rose-100 text-rose-700">
+                                    ⏰ หมดเวลา
+                                </span>
+                            </div>
+                            <div class="text-xs text-gray-400 mt-1">
+                                <span>สิ้นสุดเมื่อ: ${act.endDate || '-'} ${act.endTime || ''}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1.5 flex-shrink-0">
+                            <!-- ปุ่ม Export CSV กิจกรรมนี้ -->
+                            <button type="button" onclick="exportActivityCSV('${act.id}')" class="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1" title="ดาวน์โหลด CSV กิจกรรมนี้">
+                                <i class="fa-solid fa-file-csv"></i>
+                                <span class="hidden sm:inline">CSV</span>
+                            </button>
+                            <!-- ปุ่มขยายเวลา / นำกลับมาเปิดใหม่ -->
+                            <button type="button" onclick="reopenActivity('${act.id}')" class="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-300 rounded-lg text-xs font-bold transition-colors flex items-center gap-1" title="ขยายเวลาและเปิดแสดงใหม่">
+                                <i class="fa-solid fa-rotate"></i>
+                                <span>เปิดใหม่</span>
+                            </button>
+                            <!-- ปุ่มแก้ไข -->
+                            <button type="button" onclick="selectActivityToEdit('${act.id}')" class="p-1.5 px-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors text-xs" title="แก้ไขข้อมูล">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <!-- ปุ่มลบ -->
+                            <button type="button" onclick="selectActivityToEdit('${act.id}'); openDeleteActivityModal();" class="p-1.5 px-2 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors text-xs" title="ลบกิจกรรมนี้">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    expiredList.appendChild(item);
+                });
+            }
+        }
+
+        // ปุ่มลัด: ปิดกิจกรรมทันที (ย้ายไปหมวดหมดเวลา)
+        async function closeActivityNow(actId) {
+            const act = activities.find(a => a.id === actId);
+            if (!act) return;
+
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            act.endDate = yesterday.toISOString().split('T')[0];
+            act.hasEndTime = false;
+
+            updateAllViews();
+            showToast(`ปิดกิจกรรม "${act.topic}" เรียบร้อยแล้ว`, 'success');
+
+            await sendToCloud({
+                action: 'saveActivity',
+                id: act.id,
+                topic: act.topic,
+                remark: act.remark || '',
+                startDate: act.startDate,
+                endDate: act.endDate,
+                endTime: act.endTime || '23:59',
+                hasEndTime: false,
+                participants: Array.isArray(act.participants) ? act.participants.join(',') : (act.participants || 'ALL')
+            });
+        }
+
+        // ปุ่มลัด: นำกิจกรรมที่หมดเวลาแล้วกลับมาเปิดใหม่ (ขยายเวลาเพิ่ม 7 วัน)
+        async function reopenActivity(actId) {
+            const act = activities.find(a => a.id === actId);
+            if (!act) return;
+
+            const nextWeek = new Date();
+            nextWeek.setDate(nextWeek.getDate() + 7);
+            act.endDate = nextWeek.toISOString().split('T')[0];
+            act.hasEndTime = false;
+
+            updateAllViews();
+            showToast(`เปิดกิจกรรม "${act.topic}" อีกครั้งเรียบร้อยแล้ว`, 'success');
+
+            await sendToCloud({
+                action: 'saveActivity',
+                id: act.id,
+                topic: act.topic,
+                remark: act.remark || '',
+                startDate: act.startDate || new Date().toISOString().split('T')[0],
+                endDate: act.endDate,
+                endTime: act.endTime || '23:59',
+                hasEndTime: false,
+                participants: Array.isArray(act.participants) ? act.participants.join(',') : (act.participants || 'ALL')
+            });
+        }
+
+        // ฟังก์ชันล้างฟอร์มเพื่อสร้างกิจกรรมใหม่ และเปิด Drawer
+        function createNewActivityForm() {
+            toggleActivityFormDrawer(true);
+            const adminSel = document.getElementById('admin-activity-select');
+            if (adminSel) adminSel.value = 'new';
+            changeAdminActivity();
+            document.getElementById('admin-form-header-title').textContent = 'สร้างกิจกรรมใหม่';
+            document.getElementById('admin-form-status-badge').textContent = 'โหมดสร้างใหม่';
+            document.getElementById('admin-form-status-badge').className = 'text-xs bg-indigo-100 text-indigo-700 px-2.5 py-0.5 rounded-full font-semibold';
+            document.getElementById('admin-form-drawer')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // ดึงกิจกรรมมาแก้ไขในฟอร์ม และเปิด Drawer อัตโนมัติ
+        function selectActivityToEdit(actId) {
+            toggleActivityFormDrawer(true);
+            const adminSel = document.getElementById('admin-activity-select');
+            if (adminSel) {
+                adminSel.value = actId;
+                changeAdminActivity();
+                const act = activities.find(a => a.id === actId);
+                if (act) {
+                    document.getElementById('admin-form-header-title').textContent = `แก้ไข: ${act.topic}`;
+                    document.getElementById('admin-form-status-badge').textContent = 'กำลังแก้ไข';
+                    document.getElementById('admin-form-status-badge').className = 'text-xs bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full font-semibold';
+                }
+                document.getElementById('admin-form-drawer')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        function exportActivityCSV(actId) {
+            exportToCSV(actId);
+        }
+
+        function selectActivityFromDashboard(actId) {
+            const userSel = document.getElementById('user-activity-select');
+            if (userSel && userSel.value !== actId) {
+                userSel.value = actId;
+                changeUserActivity();
+            }
+        }
+
+        function renderMiniDashboard() {
+            const container = document.getElementById('mini-dashboard-container');
+            const countBadge = document.getElementById('user-act-count');
+            const selectedActId = document.getElementById('user-activity-select')?.value;
+            if (!container) return;
+
+            const now = new Date();
+            const ongoingActs = activities.filter(act => {
+                const targetDate = getActTargetDate(act);
+                return !targetDate || now < targetDate;
+            });
+
+            if (countBadge) countBadge.textContent = ongoingActs.length;
+
+            if (ongoingActs.length === 0) {
+                container.innerHTML = '<span class="text-xs md:text-sm text-gray-400 py-4 col-span-2 md:col-span-4 text-center">ไม่มีกิจกรรมที่เปิดให้ลงทะเบียนในขณะนี้</span>';
+                return;
+            }
+
+            container.innerHTML = '';
+            ongoingActs.forEach(act => {
+                let targetEmps = [];
+                if (act.participants === 'ALL' || !act.participants) {
+                    targetEmps = employees;
+                } else if (Array.isArray(act.participants)) {
+                    targetEmps = employees.filter(e => act.participants.includes(e.id));
+                }
+
+                const totalTarget = targetEmps.length;
+                let doneCount = 0;
+                const pendingEmps = [];
+
+                targetEmps.forEach(e => {
+                    const isDone = checkIns.some(c => c.empId === e.id && c.activityId === act.id);
+                    if (isDone) {
+                        doneCount++;
+                    } else {
+                        pendingEmps.push(e);
+                    }
+                });
+
+                const remainingCount = totalTarget - doneCount;
+                const percent = totalTarget > 0 ? Math.round((doneCount / totalTarget) * 100) : 0;
+                const isComplete = totalTarget > 0 && doneCount >= totalTarget;
+                const isSelected = act.id === selectedActId;
+                const isUrgentPending = !isComplete && remainingCount > 0 && remainingCount <= 3;
+
+                const card = document.createElement('div');
+                card.onclick = () => selectActivityFromDashboard(act.id);
+                card.className = `w-full p-3.5 sm:p-4 rounded-xl cursor-pointer transition-all select-none border text-xs flex flex-col justify-between ${
+                    isSelected 
+                        ? 'bg-indigo-600 text-white shadow-md border-indigo-600 ring-2 ring-indigo-400 ring-offset-1 scale-[1.01]' 
+                        : 'bg-white text-gray-700 hover:border-indigo-300 hover:shadow-xs border-gray-200 hover:bg-indigo-50/30'
+                }`;
+
+                let remarkHtml = '';
+                if (act.remark && act.remark.trim() !== '') {
+                    remarkHtml = `
+                        <div class="mt-2 flex items-center gap-1.5 text-xs truncate ${
+                            isSelected ? 'text-indigo-100 bg-white/10 px-2 py-0.5 rounded' : 'text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200/50'
+                        }">
+                            <i class="fa-solid fa-tag text-[10px] flex-shrink-0 ${isSelected ? 'text-indigo-200' : 'text-amber-500'}"></i>
+                            <span class="truncate" title="${act.remark}">${act.remark}</span>
+                        </div>
+                    `;
+                }
+
+                let pendingNamesHtml = '';
+                if (isUrgentPending) {
+                    const namesList = pendingEmps.map(p => p.name).join(', ');
+                    pendingNamesHtml = `
+                        <div class="mt-2.5 p-2 rounded-lg border text-xs leading-snug ${
+                            isSelected 
+                                ? 'bg-amber-400/20 text-amber-200 border-amber-300/40' 
+                                : 'bg-amber-50 text-amber-900 border-amber-200'
+                        }">
+                            <div class="font-bold flex items-center gap-1 mb-0.5">
+                                <i class="fa-solid fa-bell text-amber-500 text-[10px] animate-bounce"></i>
+                                <span>เหลืออีก ${remainingCount} คน:</span>
+                            </div>
+                            <div class="truncate font-medium" title="${namesList}">
+                                ${namesList}
+                            </div>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between gap-1 mb-1.5">
+                            <span class="font-bold truncate text-xs md:text-sm leading-tight ${isSelected ? 'text-white' : 'text-gray-900'}" title="${act.topic}">
+                                ${act.topic}
+                            </span>
+                            ${isSelected 
+                                ? '<span class="bg-white/20 text-xs font-bold px-2 py-0.5 rounded text-white flex items-center gap-1"><i class="fa-solid fa-check text-[10px]"></i>เลือก</span>' 
+                                : '<span class="text-xs text-gray-400"><i class="fa-regular fa-circle"></i></span>'}
+                        </div>
+                        ${remarkHtml}
+                        <div class="flex items-center justify-between text-xs mt-2.5 mb-1.5 ${isSelected ? 'text-indigo-100' : 'text-gray-500'}">
+                            <span><i class="fa-solid fa-user-check mr-1"></i>${doneCount}/${totalTarget} คน</span>
+                            <span class="font-bold">${percent}%</span>
+                        </div>
+                        <!-- Progress Bar -->
+                        <div class="w-full bg-black/10 rounded-full h-1.5 overflow-hidden">
+                            <div class="${isComplete ? 'bg-emerald-400' : (isSelected ? 'bg-white' : 'bg-indigo-500')} h-1.5 rounded-full transition-all duration-300" style="width: ${percent}%"></div>
+                        </div>
+                        
+                        ${pendingNamesHtml}
+                    </div>
+
+                    <div class="flex items-center justify-between pt-2.5 mt-2.5 border-t ${isSelected ? 'border-indigo-500/60' : 'border-gray-100'} text-xs">
+                        ${isComplete 
+                            ? `<span class="inline-flex items-center text-emerald-300 font-semibold ${!isSelected ? 'text-emerald-600' : ''}"><i class="fa-solid fa-circle-check mr-1"></i>ครบ</span>`
+                            : `<span class="${isSelected ? 'text-indigo-200' : 'text-gray-500'}"><i class="fa-regular fa-clock mr-1"></i>เปิดอยู่</span>`
+                        }
+                        <span class="text-xs ${isSelected ? 'text-white font-semibold' : 'text-indigo-600 font-medium'}">
+                            ${isSelected ? 'เลือกอยู่ <i class="fa-solid fa-check text-[10px]"></i>' : 'แตะเลือก <i class="fa-solid fa-angle-right text-[10px]"></i>'}
+                        </span>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            const minCards = 4;
+            const diffCards = minCards - ongoingActs.length;
+            if (diffCards > 0) {
+                for (let i = 0; i < diffCards; i++) {
+                    const emptyCard = document.createElement('div');
+                    emptyCard.className = 'w-full p-3.5 sm:p-4 rounded-xl border-2 border-dashed border-gray-200 text-xs flex flex-col items-center justify-center text-center text-gray-400 bg-gray-50/50 min-h-[120px] select-none';
+                    emptyCard.innerHTML = `
+                        <i class="fa-regular fa-calendar-plus text-gray-300 text-xl mb-1"></i>
+                        <span class="text-xs font-semibold text-gray-400">ช่องกิจกรรมว่าง</span>
+                        <span class="text-xs text-gray-300">รอเพิ่มงานใหม่</span>
+                    `;
+                    container.appendChild(emptyCard);
+                }
+            }
+        }
+
+        function toggleEndTimeInput() {
+            const hasEndTime = document.getElementById('setting-has-end-time').checked;
+            const container = document.getElementById('end-time-container');
+            if (hasEndTime) {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
         }
 
         function changeAdminActivity() {
             const actId = document.getElementById('admin-activity-select').value;
             const btnDefault = document.getElementById('btn-set-default');
             const btnDelete = document.getElementById('btn-delete-activity');
+            const cbHasEndTime = document.getElementById('setting-has-end-time');
+            const inputEndTime = document.getElementById('setting-end-time');
+            const inputRemark = document.getElementById('setting-remark');
             
             if (actId === 'new') {
                 document.getElementById('setting-act-id').value = 'act_' + Date.now();
                 document.getElementById('setting-topic').value = '';
+                if (inputRemark) inputRemark.value = '';
                 document.getElementById('setting-start').value = '';
                 document.getElementById('setting-end').value = '';
+                cbHasEndTime.checked = false;
+                inputEndTime.value = '17:00';
+                toggleEndTimeInput();
+
                 btnDefault.classList.add('hidden');
                 if (btnDelete) btnDelete.classList.add('hidden');
                 renderParticipantCheckboxes('ALL');
@@ -566,6 +1311,7 @@
                 if (act) {
                     document.getElementById('setting-act-id').value = act.id;
                     document.getElementById('setting-topic').value = act.topic;
+                    if (inputRemark) inputRemark.value = act.remark || '';
                     
                     const formatForInput = (dStr) => {
                         if(!dStr) return '';
@@ -575,15 +1321,19 @@
                     document.getElementById('setting-start').value = formatForInput(act.startDate);
                     document.getElementById('setting-end').value = formatForInput(act.endDate);
                     
+                    cbHasEndTime.checked = !!act.hasEndTime;
+                    inputEndTime.value = act.endTime || '17:00';
+                    toggleEndTimeInput();
+
                     btnDefault.classList.remove('hidden');
                     if (btnDelete) btnDelete.classList.remove('hidden');
 
                     if (act.isDefault) {
                         btnDefault.textContent = '★ เป็นค่าเริ่มต้นอยู่แล้ว';
-                        btnDefault.className = 'w-full bg-indigo-600 text-white text-xs py-2 rounded-lg font-medium shadow-sm';
+                        btnDefault.className = 'w-full bg-indigo-600 text-white text-xs md:text-sm py-2 rounded-lg font-semibold shadow-xs';
                     } else {
                         btnDefault.textContent = 'ตั้งเป็นค่าเริ่มต้น';
-                        btnDefault.className = 'w-full bg-indigo-100 text-indigo-700 border border-indigo-300 text-xs py-2 rounded-lg hover:bg-indigo-200 transition-colors font-medium';
+                        btnDefault.className = 'w-full bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs md:text-sm py-2 rounded-lg hover:bg-indigo-100 transition-colors font-medium';
                     }
 
                     renderParticipantCheckboxes(act.participants);
@@ -604,10 +1354,10 @@
                 const isChecked = selectedParticipants === 'ALL' || (Array.isArray(selectedParticipants) && selectedParticipants.includes(emp.id));
                 
                 const label = document.createElement('label');
-                label.className = 'flex items-center space-x-2 cursor-pointer p-1 hover:bg-gray-50 rounded';
+                label.className = 'flex items-center space-x-2 cursor-pointer p-1.5 hover:bg-gray-50 rounded-lg';
                 label.innerHTML = `
                     <input type="checkbox" value="${emp.id}" class="participant-cb h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" ${isChecked ? 'checked' : ''}>
-                    <span class="text-gray-700">${emp.name} <span class="text-xs text-gray-400">(${emp.dept})</span></span>
+                    <span class="text-gray-700 text-xs">${emp.name} <span class="text-gray-400">(${emp.dept})</span></span>
                 `;
                 container.appendChild(label);
             });
@@ -622,8 +1372,11 @@
             e.preventDefault();
             const id = document.getElementById('setting-act-id').value;
             const topic = document.getElementById('setting-topic').value;
+            const remark = document.getElementById('setting-remark') ? document.getElementById('setting-remark').value.trim() : '';
             const startDate = document.getElementById('setting-start').value;
             const endDate = document.getElementById('setting-end').value;
+            const hasEndTime = document.getElementById('setting-has-end-time').checked;
+            const endTime = document.getElementById('setting-end-time').value || '23:59';
 
             const checkboxes = document.querySelectorAll('.participant-cb');
             const selectedIds = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
@@ -640,19 +1393,21 @@
             let act = activities.find(a => a.id === id);
             if (!act) {
                 act = { 
-                    id, topic, startDate, endDate, 
+                    id, topic, remark, startDate, endDate, endTime, hasEndTime,
                     isDefault: activities.length === 0, 
-                    participants: participantsStr === 'ALL' ? 'ALL' : selectedIds 
+                    participants: participantsStr === 'ALL' ? 'ALL' : selectedIds
                 };
                 activities.push(act);
             } else {
-                act.topic = topic; act.startDate = startDate; act.endDate = endDate; 
+                act.topic = topic; act.remark = remark; act.startDate = startDate; act.endDate = endDate; 
+                act.endTime = endTime; act.hasEndTime = hasEndTime;
                 act.participants = participantsStr === 'ALL' ? 'ALL' : selectedIds;
             }
 
             await sendToCloud({
                 action: 'saveActivity',
-                id: id, topic: topic, startDate: startDate, endDate: endDate,
+                id: id, topic: topic, remark: remark, startDate: startDate, endDate: endDate,
+                endTime: endTime, hasEndTime: hasEndTime,
                 participants: participantsStr
             });
 
@@ -707,7 +1462,24 @@
             const actId = document.getElementById('user-activity-select').value;
             const empId = document.getElementById('emp-select').value;
             const banner = document.getElementById('user-already-done-banner');
+            const expiredBanner = document.getElementById('user-expired-banner');
             const submitBtn = document.getElementById('btn-submit-checkin');
+
+            const act = activities.find(a => a.id === actId);
+            let isExpired = false;
+
+            if (act && act.endDate) {
+                const targetDateTime = getActTargetDate(act);
+                if (targetDateTime && new Date() >= targetDateTime) {
+                    isExpired = true;
+                }
+            }
+
+            if (isExpired) {
+                if (submitBtn) submitBtn.classList.add('hidden');
+                if (banner) banner.classList.add('hidden');
+                return;
+            }
 
             if (actId && empId) {
                 const isDone = checkIns.some(c => c.empId === empId && c.activityId === actId);
@@ -740,11 +1512,20 @@
                 return; 
             }
 
+            const actData = activities.find(act => act.id === actId);
+            if (actData && actData.endDate) {
+                const targetDateTime = getActTargetDate(actData);
+                if (targetDateTime && new Date() >= targetDateTime) {
+                    showToast('กิจกรรมนี้หมดเวลาลงชื่อแล้ว!', 'error');
+                    updateCountdownTimer();
+                    return;
+                }
+            }
+
             const existing = checkIns.find(c => c.empId === empId && c.activityId === actId);
             if (existing) { showToast('คุณทำรายการในกิจกรรมนี้ไปแล้ว!', 'error'); return; }
 
             const empData = employees.find(emp => emp.id === empId);
-            const actData = activities.find(act => act.id === actId);
             
             showToast('กำลังบันทึกข้อมูล...', 'success');
 
@@ -811,18 +1592,18 @@
                 if (isDone) doneCount++;
 
                 const item = document.createElement('div');
-                item.className = `flex items-center justify-between p-3 rounded-lg border text-xs transition-all shadow-sm ${
+                item.className = `flex items-center justify-between p-3 rounded-xl border text-xs transition-all shadow-2xs ${
                     isDone ? 'bg-emerald-50 border-emerald-200' : 'bg-rose-50 border-rose-200'
                 }`;
                 item.innerHTML = `
                     <div class="flex flex-col min-w-0 pr-2">
-                        <span class="font-medium ${isDone ? 'text-emerald-900' : 'text-rose-900'} truncate">${emp.name}</span>
-                        <span class="text-[11px] ${isDone ? 'text-emerald-600' : 'text-rose-500'}">${emp.dept}</span>
+                        <span class="font-bold ${isDone ? 'text-emerald-900' : 'text-rose-900'} truncate">${emp.name}</span>
+                        <span class="text-xs ${isDone ? 'text-emerald-600' : 'text-rose-500'}">${emp.dept}</span>
                     </div>
                     <div>
                         ${isDone 
-                            ? `<span class="inline-flex items-center text-[11px] font-semibold text-emerald-700 bg-emerald-200 px-2.5 py-1 rounded-full"><i class="fa-solid fa-check-circle mr-1"></i>ทำแล้ว</span>`
-                            : `<span class="inline-flex items-center text-[11px] font-semibold text-rose-700 bg-rose-200 px-2.5 py-1 rounded-full"><i class="fa-solid fa-circle-xmark mr-1"></i>ยังไม่ทำ</span>`
+                            ? `<span class="inline-flex items-center text-xs font-bold text-emerald-700 bg-emerald-200 px-2.5 py-1 rounded-full"><i class="fa-solid fa-check-circle mr-1"></i>ทำแล้ว</span>`
+                            : `<span class="inline-flex items-center text-xs font-bold text-rose-700 bg-rose-200 px-2.5 py-1 rounded-full"><i class="fa-solid fa-circle-xmark mr-1"></i>ยังไม่ทำ</span>`
                         }
                     </div>
                 `;
@@ -853,15 +1634,16 @@
                 sortedChecks.forEach(rec => {
                     const emp = employees.find(e => e.id === rec.empId) || {name: 'Unknown', dept: '-'};
                     const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-gray-50/80 transition-colors';
                     tr.innerHTML = `
-                        <td class="px-4 py-3 whitespace-nowrap text-gray-900 font-medium">${emp.name}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-gray-500">${emp.dept}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-indigo-600 hidden md:table-cell text-xs">${rec.topic}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-center">
-                            <span class="px-2 py-0.5 inline-flex text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800"><i class="fa-solid fa-check mt-0.5 mr-1"></i> Done</span>
+                        <td class="px-5 py-3.5 whitespace-nowrap text-gray-900 font-semibold">${emp.name}</td>
+                        <td class="px-5 py-3.5 whitespace-nowrap text-gray-500">${emp.dept}</td>
+                        <td class="px-5 py-3.5 whitespace-nowrap text-indigo-600 hidden md:table-cell font-medium">${rec.topic}</td>
+                        <td class="px-5 py-3.5 whitespace-nowrap text-center">
+                            <span class="px-2.5 py-1 inline-flex text-xs font-bold rounded-full bg-emerald-100 text-emerald-800"><i class="fa-solid fa-check mt-0.5 mr-1"></i> Done</span>
                         </td>
-                        <td class="px-4 py-3 whitespace-nowrap text-center">
-                            <button onclick="toggleCheckInByAdmin('${rec.empId}', '${rec.activityId}', true)" class="text-xs bg-red-100 text-red-700 border border-red-200 px-2.5 py-1 rounded-lg hover:bg-red-200 transition-colors">
+                        <td class="px-5 py-3.5 whitespace-nowrap text-center">
+                            <button onclick="toggleCheckInByAdmin('${rec.empId}', '${rec.activityId}', true)" class="text-xs bg-red-50 text-red-700 border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-100 transition-colors font-medium">
                                 <i class="fa-solid fa-xmark mr-1"></i> ยกเลิก
                             </button>
                         </td>
@@ -888,20 +1670,21 @@
                     if (isDone) doneCount++;
 
                     const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-gray-50/80 transition-colors';
                     tr.innerHTML = `
-                        <td class="px-4 py-3 whitespace-nowrap text-gray-900 font-medium">${emp.name}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-gray-500">${emp.dept}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-gray-500 hidden md:table-cell text-xs">${actName}</td>
-                        <td class="px-4 py-3 whitespace-nowrap text-center">
+                        <td class="px-5 py-3.5 whitespace-nowrap text-gray-900 font-semibold">${emp.name}</td>
+                        <td class="px-5 py-3.5 whitespace-nowrap text-gray-500">${emp.dept}</td>
+                        <td class="px-5 py-3.5 whitespace-nowrap text-gray-600 hidden md:table-cell">${actName}</td>
+                        <td class="px-5 py-3.5 whitespace-nowrap text-center">
                             ${isDone 
-                                ? `<span class="px-2 py-0.5 inline-flex text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800"><i class="fa-solid fa-check mt-0.5 mr-1"></i> Done</span>`
-                                : `<span class="px-2 py-0.5 inline-flex text-xs font-semibold rounded-full bg-amber-100 text-amber-800"><i class="fa-solid fa-clock mt-0.5 mr-1"></i> Pending</span>`
+                                ? `<span class="px-2.5 py-1 inline-flex text-xs font-bold rounded-full bg-emerald-100 text-emerald-800"><i class="fa-solid fa-check mt-0.5 mr-1"></i> Done</span>`
+                                : `<span class="px-2.5 py-1 inline-flex text-xs font-bold rounded-full bg-amber-100 text-amber-800"><i class="fa-solid fa-clock mt-0.5 mr-1"></i> Pending</span>`
                             }
                         </td>
-                        <td class="px-4 py-3 whitespace-nowrap text-center">
+                        <td class="px-5 py-3.5 whitespace-nowrap text-center">
                             ${isDone 
-                                ? `<button onclick="toggleCheckInByAdmin('${emp.id}', '${actFilter}', true)" class="text-xs bg-red-100 text-red-700 border border-red-200 px-2.5 py-1 rounded-lg hover:bg-red-200 transition-colors"><i class="fa-solid fa-xmark mr-1"></i> ยกเลิก</button>`
-                                : `<button onclick="toggleCheckInByAdmin('${emp.id}', '${actFilter}', false)" class="text-xs bg-emerald-100 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-lg hover:bg-emerald-200 transition-colors"><i class="fa-solid fa-check mr-1"></i> เช็คชื่อให้</button>`
+                                ? `<button onclick="toggleCheckInByAdmin('${emp.id}', '${actFilter}', true)" class="text-xs bg-red-50 text-red-700 border border-red-200 px-3 py-1.5 rounded-lg hover:bg-red-100 transition-colors font-medium"><i class="fa-solid fa-xmark mr-1"></i> ยกเลิก</button>`
+                                : `<button onclick="toggleCheckInByAdmin('${emp.id}', '${actFilter}', false)" class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-300 px-3 py-1.5 rounded-lg hover:bg-emerald-100 transition-colors font-bold"><i class="fa-solid fa-check mr-1"></i> เช็คชื่อให้</button>`
                             }
                         </td>
                     `;
@@ -914,7 +1697,7 @@
             }
             
             if (tbody.innerHTML === '') {
-                tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-8 text-center text-gray-400">ไม่มีข้อมูลในกิจกรรมนี้</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="px-5 py-8 text-center text-gray-400">ไม่มีข้อมูลในกิจกรรมนี้</td></tr>`;
             }
         }
 
@@ -950,8 +1733,8 @@
         function switchTab(tabId) {
             document.getElementById('view-checkin').classList.toggle('hidden', tabId !== 'checkin');
             document.getElementById('view-admin').classList.toggle('hidden', tabId !== 'admin');
-            document.getElementById('tab-btn-checkin').className = tabId === 'checkin' ? 'px-6 py-3 text-sm transition-colors tab-active' : 'px-6 py-3 text-sm transition-colors tab-inactive';
-            document.getElementById('tab-btn-admin').className = tabId === 'admin' ? 'px-6 py-3 text-sm transition-colors tab-active' : 'px-6 py-3 text-sm transition-colors tab-inactive';
+            document.getElementById('tab-btn-checkin').className = tabId === 'checkin' ? 'px-6 py-3 text-sm md:text-base transition-colors tab-active' : 'px-6 py-3 text-sm md:text-base transition-colors tab-inactive';
+            document.getElementById('tab-btn-admin').className = tabId === 'admin' ? 'px-6 py-3 text-sm md:text-base transition-colors tab-active' : 'px-6 py-3 text-sm md:text-base transition-colors tab-inactive';
             
             if (tabId === 'admin') {
                 if (isAdminAuthenticated) {
@@ -977,13 +1760,13 @@
             if (subTab === 'main') {
                 mainView.classList.remove('hidden');
                 settingsView.classList.add('hidden');
-                mainBtn.className = "flex-1 py-2 px-4 rounded-lg transition-all bg-white text-indigo-600 shadow-sm font-semibold flex items-center justify-center gap-2";
-                settingsBtn.className = "flex-1 py-2 px-4 rounded-lg transition-all text-gray-600 hover:text-gray-900 font-medium flex items-center justify-center gap-2";
+                mainBtn.className = "flex-1 py-2.5 px-4 rounded-lg transition-all bg-white text-indigo-600 shadow-xs font-bold flex items-center justify-center gap-2";
+                settingsBtn.className = "flex-1 py-2.5 px-4 rounded-lg transition-all text-gray-600 hover:text-gray-900 font-medium flex items-center justify-center gap-2";
             } else {
                 mainView.classList.add('hidden');
                 settingsView.classList.remove('hidden');
-                mainBtn.className = "flex-1 py-2 px-4 rounded-lg transition-all text-gray-600 hover:text-gray-900 font-medium flex items-center justify-center gap-2";
-                settingsBtn.className = "flex-1 py-2 px-4 rounded-lg transition-all bg-white text-indigo-600 shadow-sm font-semibold flex items-center justify-center gap-2";
+                mainBtn.className = "flex-1 py-2.5 px-4 rounded-lg transition-all text-gray-600 hover:text-gray-900 font-medium flex items-center justify-center gap-2";
+                settingsBtn.className = "flex-1 py-2.5 px-4 rounded-lg transition-all bg-white text-indigo-600 shadow-xs font-bold flex items-center justify-center gap-2";
             }
         }
 
@@ -1068,16 +1851,16 @@
             list.innerHTML = '';
             [...employees].sort((a,b) => a.name.localeCompare(b.name, 'th')).forEach(emp => {
                 list.innerHTML += `
-                    <div class="flex justify-between items-center p-2.5 hover:bg-gray-50">
-                        <div class="flex flex-col"><span class="text-xs font-medium text-gray-800">${emp.name}</span><span class="text-[11px] text-gray-500">${emp.dept}</span></div>
-                        <button onclick="openDeleteModal('${emp.id}')" class="text-gray-400 hover:text-red-500 p-1.5 transition-colors"><i class="fa-solid fa-trash text-xs"></i></button>
+                    <div class="flex justify-between items-center p-3 hover:bg-gray-50/80 transition-colors">
+                        <div class="flex flex-col"><span class="text-xs md:text-sm font-semibold text-gray-800">${emp.name}</span><span class="text-xs text-gray-500">${emp.dept}</span></div>
+                        <button onclick="openDeleteModal('${emp.id}')" class="text-gray-400 hover:text-red-500 p-2 transition-colors"><i class="fa-solid fa-trash text-xs"></i></button>
                     </div>`;
             });
         }
 
-        function exportToCSV() {
+        function exportToCSV(specificActId = null) {
             let csv = '\uFEFFชื่อพนักงาน,แผนก,หัวข้อกิจกรรม,สถานะ,วันเวลาที่เช็คชื่อ\n';
-            const actFilter = document.getElementById('report-activity-select').value;
+            const actFilter = specificActId || document.getElementById('report-activity-select').value;
             
             const formatDateTime = (ts) => {
                 if (!ts) return '-';
@@ -1103,7 +1886,7 @@
             
             const link = document.createElement("a");
             link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
-            link.download = `Report_${Date.now()}.csv`;
+            link.download = `Report_${actFilter === 'all' ? 'All' : actFilter}_${Date.now()}.csv`;
             link.click();
         }
 
@@ -1112,8 +1895,8 @@
             const toast = document.createElement('div');
             const colors = type === 'success' ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white';
             const icon = type === 'success' ? 'fa-check-circle' : 'fa-circle-exclamation';
-            toast.className = `flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg border-l-4 toast-enter ${colors}`;
-            toast.innerHTML = `<i class="fa-solid ${icon}"></i><span class="text-xs font-medium">${message}</span>`;
+            toast.className = `flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border-l-4 toast-enter ${colors}`;
+            toast.innerHTML = `<i class="fa-solid ${icon}"></i><span class="text-xs md:text-sm font-semibold">${message}</span>`;
             container.appendChild(toast);
             setTimeout(() => {
                 toast.classList.replace('toast-enter', 'toast-exit');
