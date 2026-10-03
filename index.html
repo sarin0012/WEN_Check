@@ -8,6 +8,9 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- Chart.js for KPI Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <!-- FontAwesome & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -206,11 +209,15 @@
                 
                 <!-- Admin Sub-Navigation Tabs -->
                 <div class="flex border-b border-gray-200 bg-gray-100 p-1 rounded-xl gap-1 text-xs md:text-sm font-medium">
-                    <button type="button" id="admin-subtab-main" onclick="switchAdminSubTab('main')" class="flex-1 py-2.5 px-4 rounded-lg transition-all bg-white text-indigo-600 shadow-xs font-bold flex items-center justify-center gap-2">
+                    <button type="button" id="admin-subtab-main" onclick="switchAdminSubTab('main')" class="flex-1 py-2.5 px-3 rounded-lg transition-all bg-white text-indigo-600 shadow-xs font-bold flex items-center justify-center gap-2">
                         <i class="fa-solid fa-chart-line"></i>
                         <span>จัดการกิจกรรม & รายงาน</span>
                     </button>
-                    <button type="button" id="admin-subtab-settings" onclick="switchAdminSubTab('settings')" class="flex-1 py-2.5 px-4 rounded-lg transition-all text-gray-600 hover:text-gray-900 font-medium flex items-center justify-center gap-2">
+                    <button type="button" id="admin-subtab-kpi" onclick="switchAdminSubTab('kpi')" class="flex-1 py-2.5 px-3 rounded-lg transition-all text-gray-600 hover:text-gray-900 font-medium flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <span>แดชบอร์ด KPI & สถิติ</span>
+                    </button>
+                    <button type="button" id="admin-subtab-settings" onclick="switchAdminSubTab('settings')" class="flex-1 py-2.5 px-3 rounded-lg transition-all text-gray-600 hover:text-gray-900 font-medium flex items-center justify-center gap-2">
                         <i class="fa-solid fa-sliders"></i>
                         <span>ตั้งค่าผู้ดูแล & การ์ดเชื่อมต่อ</span>
                     </button>
@@ -451,6 +458,235 @@
                     </div>
                 </div>
 
+                <!-- SUB-VIEW 3: KPI & ANALYTICS DASHBOARD -->
+                <div id="admin-subview-kpi" class="hidden flex flex-col gap-6 animate-[slideInRight_0.2s_ease-out]">
+                    <!-- KPI Header & Filter -->
+                    <div class="bg-gradient-to-r from-indigo-700 via-indigo-800 to-slate-800 text-white p-5 md:p-6 rounded-2xl shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="bg-indigo-500/40 text-indigo-200 text-xs px-2.5 py-0.5 rounded-full font-bold border border-indigo-400/30">
+                                    <i class="fa-solid fa-trophy text-amber-300 mr-1"></i> Performance & Analytics
+                                </span>
+                            </div>
+                            <h2 class="text-lg md:text-xl font-bold">แดชบอร์ดสรุปผลกิจกรรม & ตัวชี้วัด KPI</h2>
+                            <p class="text-xs md:text-sm text-indigo-200 mt-0.5">วิเคราะห์อัตราความสำเร็จ ประเมินความร่วมมือรายกิจกรรม และสถิติรายแผนก</p>
+                        </div>
+                        <div class="flex items-center gap-2 w-full md:w-auto">
+                            <span class="text-xs text-indigo-200 font-medium whitespace-nowrap">เลือกกิจกรรม:</span>
+                            <select id="kpi-filter-select" onchange="renderKPIDashboard()" class="w-full md:w-auto p-2.5 text-xs text-gray-800 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-400 font-semibold shadow-xs">
+                                <option value="all">📊 สรุปทุกกิจกรรมรวมกัน</option>
+                                <option value="expired">⏰ เฉพาะกิจกรรมที่ปิด/หมดเวลาแล้ว</option>
+                                <option value="ongoing">🟢 เฉพาะกิจกรรมที่กำลังดำเนินการ</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 1. Interactive KPI Target vs Actual Bar Chart Section (แสดงขึ้นมาก่อน) -->
+                    <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-xs flex flex-col gap-4">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b pb-3">
+                            <div class="flex items-center gap-2">
+                                <span class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm font-bold">
+                                    <i class="fa-solid fa-chart-column"></i>
+                                </span>
+                                <div>
+                                    <h3 class="text-sm sm:text-base font-bold text-gray-800">กราฟเปรียบเทียบเป้าหมาย (Total) vs คนที่ทำแล้ว (Done) รายกิจกรรม</h3>
+                                    <p class="text-xs text-gray-500">แกน X คือกิจกรรม, แกน Y คือจำนวนคน (ชี้หรือแตะแท่งกราฟเพื่อดูคนที่ยังไม่ทำ)</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-2 w-full sm:w-auto">
+                                <span class="text-xs text-gray-500 font-medium whitespace-nowrap">เจาะจงกิจกรรม:</span>
+                                <select id="kpi-activity-focus-select" onchange="renderKPIChart()" class="p-2 text-xs border border-gray-300 rounded-lg bg-gray-50 focus:ring-indigo-500 font-medium w-full sm:w-auto">
+                                    <option value="all">📈 แสดงทุกกิจกรรมในกราฟ</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Chart Legend & Status Indicators -->
+                        <div class="flex flex-wrap items-center justify-between gap-3 text-xs">
+                            <div class="flex items-center gap-4">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-3.5 h-3.5 rounded bg-emerald-500 inline-block"></span>
+                                    <span class="font-medium text-gray-700">ทำแล้ว (Done)</span>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-3.5 h-3.5 rounded bg-amber-500 inline-block"></span>
+                                    <span class="font-medium text-gray-600">ยังไม่ทำ (Pending Target)</span>
+                                </div>
+                            </div>
+                            <div class="text-[11px] text-indigo-600 font-semibold flex items-center gap-1 bg-indigo-50 px-2.5 py-1 rounded-lg">
+                                <i class="fa-solid fa-hand-pointer"></i> คลิกที่แท่งกราฟเพื่อดูรายชื่อผู้ค้างทำด้านล่าง
+                            </div>
+                        </div>
+
+                        <!-- Chart Canvas Container -->
+                        <div class="relative w-full h-72 sm:h-80 md:h-96">
+                            <canvas id="kpi-activities-chart"></canvas>
+                        </div>
+
+                        <!-- Inspector Panel (appears when bar clicked) -->
+                        <div id="chart-inspector-panel" class="hidden mt-2 p-4 bg-amber-50/90 border border-amber-200 rounded-xl transition-all">
+                            <div class="flex flex-wrap items-center justify-between gap-2 border-b border-amber-200/70 pb-2 mb-2.5">
+                                <div class="flex items-center gap-2">
+                                    <i class="fa-solid fa-circle-exclamation text-amber-600 text-sm"></i>
+                                    <span class="text-xs sm:text-sm font-bold text-gray-800" id="inspector-act-title">-</span>
+                                </div>
+                                <span id="inspector-stats-badge" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-200 text-amber-900">-</span>
+                            </div>
+                            <div class="text-xs text-gray-600 font-medium mb-1.5">รายชื่อคนที่ยังไม่ทำ:</div>
+                            <div id="inspector-names-list" class="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto custom-scrollbar p-1">
+                                <!-- Populated via JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Top 4 KPI Cards (ย้ายลงมาแสดงใต้กราฟ) -->
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                        <!-- KPI Card 1: Rate -->
+                        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-gray-200 shadow-xs flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">อัตราความสำเร็จรวม (KPI)</span>
+                                <span class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm">
+                                    <i class="fa-solid fa-bullseye"></i>
+                                </span>
+                            </div>
+                            <div>
+                                <div class="flex items-baseline gap-2">
+                                    <span id="kpi-stat-rate" class="text-2xl sm:text-3xl font-extrabold text-indigo-600">0%</span>
+                                    <span id="kpi-stat-rate-badge" class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700">-</span>
+                                </div>
+                                <div class="w-full bg-gray-100 rounded-full h-2 mt-3 overflow-hidden">
+                                    <div id="kpi-stat-progress-bar" class="bg-indigo-600 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- KPI Card 2: Participants -->
+                        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-gray-200 shadow-xs flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">ยอดการทำรายการ</span>
+                                <span class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-sm">
+                                    <i class="fa-solid fa-user-check"></i>
+                                </span>
+                            </div>
+                            <div>
+                                <div class="flex items-baseline gap-1.5">
+                                    <span id="kpi-stat-done" class="text-2xl sm:text-3xl font-extrabold text-emerald-600">0</span>
+                                    <span class="text-sm text-gray-400 font-bold">/</span>
+                                    <span id="kpi-stat-target" class="text-base sm:text-lg font-bold text-gray-600">0</span>
+                                    <span class="text-xs text-gray-500 font-medium">ครั้ง</span>
+                                </div>
+                                <div class="text-[11px] text-gray-400 mt-2 flex items-center gap-1">
+                                    <i class="fa-solid fa-hourglass-half text-amber-500"></i>
+                                    <span>ค้างทำ: <strong id="kpi-stat-pending" class="text-amber-600 font-bold">0</strong> ครั้ง</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- KPI Card 3: 100% Completed Acts -->
+                        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-gray-200 shadow-xs flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">กิจกรรมที่บรรลุเป้า 100%</span>
+                                <span class="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-sm">
+                                    <i class="fa-solid fa-award"></i>
+                                </span>
+                            </div>
+                            <div>
+                                <div class="flex items-baseline gap-2">
+                                    <span id="kpi-stat-completed-acts" class="text-2xl sm:text-3xl font-extrabold text-amber-600">0</span>
+                                    <span class="text-xs text-gray-500 font-medium">กิจกรรม</span>
+                                </div>
+                                <div class="text-[11px] text-gray-400 mt-2 flex items-center gap-1">
+                                    <i class="fa-solid fa-flag-checkered text-emerald-600"></i>
+                                    <span>จากกิจกรรมทั้งหมด <strong id="kpi-stat-total-acts" class="text-gray-700 font-bold">0</strong> งาน</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- KPI Card 4: Expired vs Active -->
+                        <div class="bg-white p-4 sm:p-5 rounded-2xl border border-gray-200 shadow-xs flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">สถานะงาน (ปิดแล้ว/เปิดอยู่)</span>
+                                <span class="w-8 h-8 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center text-sm">
+                                    <i class="fa-solid fa-clock-rotate-left"></i>
+                                </span>
+                            </div>
+                            <div>
+                                <div class="flex items-baseline gap-2">
+                                    <span id="kpi-stat-closed-acts" class="text-2xl sm:text-3xl font-extrabold text-slate-700">0</span>
+                                    <span class="text-xs text-slate-500 font-medium">ปิดแล้ว</span>
+                                    <span class="text-xs text-gray-300">|</span>
+                                    <span id="kpi-stat-ongoing-acts" class="text-base sm:text-lg font-bold text-emerald-600">0</span>
+                                    <span class="text-xs text-emerald-700 font-medium">เปิดอยู่</span>
+                                </div>
+                                <div class="text-[11px] text-gray-400 mt-2">
+                                    <span>วัดผลเมื่อสิ้นสุดโครงการ</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Split Row: Department Leaderboard & Activities Scorecard -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                        
+                        <!-- Left: Department Leaderboard (5 Cols) -->
+                        <div class="lg:col-span-5 bg-white p-5 rounded-2xl border border-gray-200 shadow-xs flex flex-col">
+                            <div class="flex items-center justify-between border-b pb-3 mb-4">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs font-bold">
+                                        <i class="fa-solid fa-ranking-star"></i>
+                                    </span>
+                                    <div>
+                                        <h3 class="text-sm font-bold text-gray-800">อัตราความสำเร็จรายแผนก (Department KPI)</h3>
+                                        <p class="text-[11px] text-gray-500">เรียงตาม % การส่งงานและเช็คชื่อ</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="kpi-dept-list" class="space-y-3 max-h-[460px] overflow-y-auto custom-scrollbar pr-1">
+                                <!-- Populated dynamically via JS -->
+                            </div>
+                        </div>
+
+                        <!-- Right: Activity KPI Scorecard Table (7 Cols) -->
+                        <div class="lg:col-span-7 bg-white p-5 rounded-2xl border border-gray-200 shadow-xs flex flex-col">
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b pb-3 mb-4 gap-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-xs font-bold">
+                                        <i class="fa-solid fa-clipboard-list"></i>
+                                    </span>
+                                    <div>
+                                        <h3 class="text-sm font-bold text-gray-800">ตารางสรุปผลรายกิจกรรม (Scorecard)</h3>
+                                        <p class="text-[11px] text-gray-500">ดูผลงานและดาวน์โหลดรายงานของแต่ละงาน</p>
+                                    </div>
+                                </div>
+                                <button type="button" onclick="exportKPIScorecardCSV()" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 shadow-2xs">
+                                    <i class="fa-solid fa-file-excel"></i>
+                                    <span>ดาวน์โหลดสรุป KPI (CSV)</span>
+                                </button>
+                            </div>
+
+                            <div class="overflow-x-auto border border-gray-200 rounded-xl">
+                                <table class="min-w-full divide-y divide-gray-200 text-xs">
+                                    <thead class="bg-gray-50 text-gray-600 uppercase text-[11px] font-bold">
+                                        <tr>
+                                            <th class="px-3.5 py-3 text-left">กิจกรรม</th>
+                                            <th class="px-3 py-3 text-center">สถานะ</th>
+                                            <th class="px-3 py-3 text-center">เป้าหมาย</th>
+                                            <th class="px-3 py-3 text-center">ทำแล้ว</th>
+                                            <th class="px-3 py-3 text-center">บรรลุ (KPI)</th>
+                                            <th class="px-3 py-3 text-center">รายงาน</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="kpi-activity-table-body" class="bg-white divide-y divide-gray-100">
+                                        <!-- Populated via JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
                 <!-- SUB-VIEW 2: SETTINGS VIEW -->
                 <div id="admin-subview-settings" class="hidden max-w-xl mx-auto w-full bg-indigo-50/70 p-6 md:p-8 rounded-2xl border border-indigo-200 shadow-sm animate-[slideInRight_0.2s_ease-out]">
                     <h3 class="text-base font-bold mb-4 text-indigo-900 border-b border-indigo-200 pb-2 flex justify-between items-center">
@@ -540,6 +776,9 @@
         let adminEmail2 = "";
         let timerInterval = null;
         let currentAdminActCategory = 'ongoing';
+        let kpiChartInstance = null;
+        let currentKPIData = [];
+        let chartStatusFilter = 'all';
 
         window.onload = async () => {
             const scriptUrlInput = document.getElementById('setting-script-url');
@@ -916,6 +1155,157 @@
             changeUserActivity();
             renderEmployeeListAdmin();
             renderReport();
+            renderKPIDashboard();
+        }
+
+        function renderEmployeeListAdmin() {
+            const list = document.getElementById('employee-list');
+            const badge = document.getElementById('emp-count-badge');
+            if (badge) badge.textContent = employees.length;
+            if (!list) return;
+
+            list.innerHTML = '';
+            if (employees.length === 0) {
+                list.innerHTML = '<div class="p-4 text-center text-xs text-gray-400">ยังไม่มีรายชื่อพนักงาน</div>';
+                return;
+            }
+
+            [...employees].sort((a, b) => a.name.localeCompare(b.name, 'th')).forEach(emp => {
+                const item = document.createElement('div');
+                item.className = 'flex justify-between items-center p-2.5 hover:bg-gray-50 transition-colors';
+                item.innerHTML = `
+                    <div class="flex flex-col min-w-0 pr-2">
+                        <span class="text-xs font-semibold text-gray-800 truncate">${emp.name}</span>
+                        <span class="text-[11px] text-gray-500 truncate">${emp.dept}</span>
+                    </div>
+                    <button type="button" onclick="openDeleteModal('${emp.id}')" class="text-gray-400 hover:text-red-500 p-1.5 rounded-lg transition-colors flex-shrink-0" title="ลบพนักงาน">
+                        <i class="fa-solid fa-trash text-xs"></i>
+                    </button>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        async function addEmployee(e) {
+            e.preventDefault();
+            const nameInput = document.getElementById('new-emp-name');
+            const deptInput = document.getElementById('new-emp-dept');
+            const name = nameInput.value.trim();
+            const dept = deptInput.value.trim();
+            const id = 'emp_' + Date.now();
+
+            if (name && dept) {
+                employees.push({ id, name, dept });
+                nameInput.value = '';
+                deptInput.value = '';
+                updateAllViews();
+                await sendToCloud({ action: 'addEmployee', id, name, dept });
+                showToast('เพิ่มพนักงานสำเร็จ', 'success');
+            }
+        }
+
+        let empToDelete = null;
+        function openDeleteModal(id) {
+            empToDelete = id;
+            document.getElementById('delete-modal-title').textContent = 'ลบพนักงาน';
+            document.getElementById('delete-modal-msg').textContent = 'คุณแน่ใจหรือไม่ที่จะลบพนักงานคนนี้ออกจากระบบ?';
+            document.getElementById('delete-modal').classList.remove('hidden');
+            document.getElementById('btn-confirm-delete').onclick = async () => {
+                document.getElementById('delete-modal').classList.add('hidden');
+                employees = employees.filter(e => e.id !== empToDelete);
+                updateAllViews();
+                await sendToCloud({ action: 'deleteEmployee', id: empToDelete });
+                showToast('ลบพนักงานสำเร็จ', 'success');
+            };
+        }
+
+        function openDeleteActivityModal() {
+            const actId = document.getElementById('setting-act-id').value;
+            if (!actId || actId === 'new') return;
+            const act = activities.find(a => a.id === actId);
+            if (!act) return;
+
+            document.getElementById('delete-modal-title').textContent = 'ลบกิจกรรม';
+            document.getElementById('delete-modal-msg').textContent = `คุณแน่ใจหรือไม่ที่จะลบกิจกรรม "${act.topic}" รวมถึงประวัติการเช็คชื่อทั้งหมดในกิจกรรมนี้?`;
+            document.getElementById('delete-modal').classList.remove('hidden');
+            document.getElementById('btn-confirm-delete').onclick = async () => {
+                document.getElementById('delete-modal').classList.add('hidden');
+                
+                activities = activities.filter(a => a.id !== actId);
+                checkIns = checkIns.filter(c => c.activityId !== actId);
+
+                updateAllViews();
+                document.getElementById('admin-activity-select').value = 'new';
+                changeAdminActivity();
+                
+                await sendToCloud({ action: 'deleteActivity', id: actId });
+                showToast('ลบกิจกรรมสำเร็จ', 'success');
+            };
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('delete-modal').classList.add('hidden');
+        }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const passInput = document.getElementById('admin-password-input');
+            if (passInput && passInput.value === adminPassword) {
+                isAdminAuthenticated = true;
+                showToast('เข้าสู่ระบบผู้ดูแลสำเร็จ', 'success');
+                switchTab('admin');
+            } else {
+                showToast('รหัสผ่านไม่ถูกต้อง', 'error');
+                if (passInput) passInput.value = '';
+            }
+        }
+
+        function logoutAdmin() {
+            isAdminAuthenticated = false;
+            const passInput = document.getElementById('admin-password-input');
+            if (passInput) passInput.value = '';
+            showToast('ล็อกหน้าจอเรียบร้อยแล้ว', 'success');
+            switchTab('admin');
+        }
+
+        function exportToCSV(actFilterParam = null) {
+            const actFilter = actFilterParam || document.getElementById('report-activity-select')?.value || 'all';
+            let csv = '\uFEFFชื่อพนักงาน,แผนก,หัวข้อกิจกรรม,สถานะ,วันเวลาที่เช็คชื่อ\n';
+
+            const formatDateTime = (ts) => {
+                if (!ts) return '-';
+                const d = new Date(ts);
+                return isNaN(d) ? ts : d.toLocaleString('th-TH');
+            };
+
+            if (actFilter === 'all') {
+                checkIns.forEach(c => {
+                    const emp = employees.find(e => e.id === c.empId) || { name: '-', dept: '-' };
+                    const timeStr = formatDateTime(c.timestamp);
+                    csv += `"${emp.name}","${emp.dept}","${c.topic}","Done","${timeStr}"\n`;
+                });
+            } else {
+                const act = activities.find(a => a.id === actFilter);
+                const actName = act ? act.topic : '';
+                let targetEmployees = [];
+                if (!act || act.participants === 'ALL' || !act.participants) {
+                    targetEmployees = [...employees];
+                } else if (Array.isArray(act.participants)) {
+                    targetEmployees = employees.filter(emp => act.participants.includes(emp.id));
+                }
+
+                targetEmployees.forEach(emp => {
+                    const check = checkIns.find(c => c.empId === emp.id && c.activityId === actFilter);
+                    const isDone = !!check;
+                    const timeStr = isDone ? formatDateTime(check.timestamp) : '-';
+                    csv += `"${emp.name}","${emp.dept}","${actName}","${isDone ? 'Done' : 'Pending'}","${timeStr}"\n`;
+                });
+            }
+
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+            link.download = `Report_${actFilter}_${Date.now()}.csv`;
+            link.click();
         }
 
         function switchAdminActCategory(category) {
@@ -1757,143 +2147,836 @@
 
         function switchAdminSubTab(subTab) {
             const mainView = document.getElementById('admin-subview-main');
+            const kpiView = document.getElementById('admin-subview-kpi');
             const settingsView = document.getElementById('admin-subview-settings');
             const mainBtn = document.getElementById('admin-subtab-main');
+            const kpiBtn = document.getElementById('admin-subtab-kpi');
             const settingsBtn = document.getElementById('admin-subtab-settings');
 
             if (!mainView || !settingsView || !mainBtn || !settingsBtn) return;
 
+            // Reset all subtabs
+            mainView.classList.add('hidden');
+            if (kpiView) kpiView.classList.add('hidden');
+            settingsView.classList.add('hidden');
+
+            mainBtn.className = "flex-1 py-2.5 px-3 rounded-lg transition-all text-gray-600 hover:text-gray-900 font-medium flex items-center justify-center gap-2";
+            if (kpiBtn) kpiBtn.className = "flex-1 py-2.5 px-3 rounded-lg transition-all text-gray-600 hover:text-gray-900 font-medium flex items-center justify-center gap-2";
+            settingsBtn.className = "flex-1 py-2.5 px-3 rounded-lg transition-all text-gray-600 hover:text-gray-900 font-medium flex items-center justify-center gap-2";
+
             if (subTab === 'main') {
                 mainView.classList.remove('hidden');
-                settingsView.classList.add('hidden');
-                mainBtn.className = "flex-1 py-2.5 px-4 rounded-lg transition-all bg-white text-indigo-600 shadow-xs font-bold flex items-center justify-center gap-2";
-                settingsBtn.className = "flex-1 py-2.5 px-4 rounded-lg transition-all text-gray-600 hover:text-gray-900 font-medium flex items-center justify-center gap-2";
-            } else {
-                mainView.classList.add('hidden');
+                mainBtn.className = "flex-1 py-2.5 px-3 rounded-lg transition-all bg-white text-indigo-600 shadow-xs font-bold flex items-center justify-center gap-2";
+            } else if (subTab === 'kpi') {
+                if (kpiView) kpiView.classList.remove('hidden');
+                if (kpiBtn) kpiBtn.className = "flex-1 py-2.5 px-3 rounded-lg transition-all bg-white text-indigo-600 shadow-xs font-bold flex items-center justify-center gap-2";
+                renderKPIDashboard();
+            } else if (subTab === 'settings') {
                 settingsView.classList.remove('hidden');
-                mainBtn.className = "flex-1 py-2.5 px-4 rounded-lg transition-all text-gray-600 hover:text-gray-900 font-medium flex items-center justify-center gap-2";
-                settingsBtn.className = "flex-1 py-2.5 px-4 rounded-lg transition-all bg-white text-indigo-600 shadow-xs font-bold flex items-center justify-center gap-2";
+                settingsBtn.className = "flex-1 py-2.5 px-3 rounded-lg transition-all bg-white text-indigo-600 shadow-xs font-bold flex items-center justify-center gap-2";
             }
         }
 
-        function handleAdminLogin(e) {
-            e.preventDefault();
-            if (document.getElementById('admin-password-input').value === adminPassword) {
-                isAdminAuthenticated = true;
-                showToast('เข้าสู่ระบบผู้ดูแลสำเร็จ', 'success');
-                switchTab('admin');
-            } else {
-                showToast('รหัสผ่านไม่ถูกต้อง', 'error');
-                document.getElementById('admin-password-input').value = '';
+        function renderKPIDashboard() {
+            const filterEl = document.getElementById('kpi-filter-select');
+            const filter = filterEl ? filterEl.value : 'all';
+            const now = new Date();
+
+            let targetActs = [...activities];
+            if (filter === 'expired') {
+                targetActs = targetActs.filter(act => {
+                    const targetDate = getActTargetDate(act);
+                    return targetDate && now >= targetDate;
+                });
+            } else if (filter === 'ongoing') {
+                targetActs = targetActs.filter(act => {
+                    const targetDate = getActTargetDate(act);
+                    return !targetDate || now < targetDate;
+                });
             }
-        }
 
-        function logoutAdmin() {
-            isAdminAuthenticated = false;
-            document.getElementById('admin-password-input').value = '';
-            showToast('ล็อกหน้าจอเรียบร้อยแล้ว', 'success');
-            switchTab('admin');
-        }
+            let totalExpectedChecks = 0;
+            let totalActualChecks = 0;
+            let fullCompletedActsCount = 0;
+            let closedActsCount = 0;
+            let ongoingActsCount = 0;
 
-        async function addEmployee(e) {
-            e.preventDefault();
-            const name = document.getElementById('new-emp-name').value.trim();
-            const dept = document.getElementById('new-emp-dept').value.trim();
-            const id = 'emp_' + Date.now();
-            if (name && dept) {
-                employees.push({ id, name, dept });
-                document.getElementById('new-emp-name').value = ''; 
-                document.getElementById('new-emp-dept').value = '';
-                updateAllViews();
-                await sendToCloud({ action: 'addEmployee', id, name, dept });
-                showToast('เพิ่มพนักงานสำเร็จ', 'success');
+            const actRows = [];
+            const deptStats = {};
+
+            // Initialize all existing departments
+            employees.forEach(e => {
+                const d = e.dept || 'ไม่ระบุแผนก';
+                if (!deptStats[d]) {
+                    deptStats[d] = { totalExpected: 0, actualDone: 0, totalEmployees: 0, empIds: new Set() };
+                }
+                deptStats[d].empIds.add(e.id);
+            });
+            Object.keys(deptStats).forEach(d => {
+                deptStats[d].totalEmployees = deptStats[d].empIds.size;
+            });
+
+            // Calculate metrics across activities
+            targetActs.forEach(act => {
+                const targetDate = getActTargetDate(act);
+                const isClosed = targetDate && now >= targetDate;
+                if (isClosed) closedActsCount++; else ongoingActsCount++;
+
+                let actEmps = [];
+                if (act.participants === 'ALL' || !act.participants) {
+                    actEmps = [...employees];
+                } else if (Array.isArray(act.participants)) {
+                    actEmps = employees.filter(e => act.participants.includes(e.id));
+                }
+
+                const actTarget = actEmps.length;
+                let actDone = 0;
+
+                actEmps.forEach(emp => {
+                    const isDone = checkIns.some(c => c.empId === emp.id && c.activityId === act.id);
+                    const d = emp.dept || 'ไม่ระบุแผนก';
+                    if (!deptStats[d]) {
+                        deptStats[d] = { totalExpected: 0, actualDone: 0, totalEmployees: 0 };
+                    }
+                    deptStats[d].totalExpected++;
+                    if (isDone) {
+                        actDone++;
+                        deptStats[d].actualDone++;
+                    }
+                });
+
+                totalExpectedChecks += actTarget;
+                totalActualChecks += actDone;
+
+                const actRate = actTarget > 0 ? Math.round((actDone / actTarget) * 100) : 0;
+                if (actTarget > 0 && actDone >= actTarget) {
+                    fullCompletedActsCount++;
+                }
+
+                actRows.push({
+                    id: act.id,
+                    topic: act.topic,
+                    isClosed: isClosed,
+                    target: actTarget,
+                    done: actDone,
+                    pending: actTarget - actDone,
+                    rate: actRate,
+                    endDate: act.endDate || '-'
+                });
+            });
+
+            // Overall Rate
+            const overallRate = totalExpectedChecks > 0 ? Math.round((totalActualChecks / totalExpectedChecks) * 100) : 0;
+            const rateEl = document.getElementById('kpi-stat-rate');
+            const rateBar = document.getElementById('kpi-stat-progress-bar');
+            const rateBadge = document.getElementById('kpi-stat-rate-badge');
+
+            if (rateEl) rateEl.textContent = `${overallRate}%`;
+            if (rateBar) rateBar.style.width = `${overallRate}%`;
+            if (rateBadge) {
+                if (overallRate >= 90) {
+                    rateBadge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800';
+                    rateBadge.textContent = 'ยอดเยี่ยม (A)';
+                } else if (overallRate >= 75) {
+                    rateBadge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800';
+                    rateBadge.textContent = 'ดี (B)';
+                } else if (overallRate >= 50) {
+                    rateBadge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800';
+                    rateBadge.textContent = 'ปานกลาง (C)';
+                } else {
+                    rateBadge.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800';
+                    rateBadge.textContent = 'ต้องติดตาม (D)';
+                }
             }
+
+            const doneEl = document.getElementById('kpi-stat-done');
+            const targetEl = document.getElementById('kpi-stat-target');
+            const pendingEl = document.getElementById('kpi-stat-pending');
+            if (doneEl) doneEl.textContent = totalActualChecks;
+            if (targetEl) targetEl.textContent = totalExpectedChecks;
+            if (pendingEl) pendingEl.textContent = Math.max(0, totalExpectedChecks - totalActualChecks);
+
+            const compActsEl = document.getElementById('kpi-stat-completed-acts');
+            const totalActsEl = document.getElementById('kpi-stat-total-acts');
+            if (compActsEl) compActsEl.textContent = fullCompletedActsCount;
+            if (totalActsEl) totalActsEl.textContent = targetActs.length;
+
+            const closedEl = document.getElementById('kpi-stat-closed-acts');
+            const ongoingEl = document.getElementById('kpi-stat-ongoing-acts');
+            if (closedEl) closedEl.textContent = closedActsCount;
+            if (ongoingEl) ongoingEl.textContent = ongoingActsCount;
+
+            // Populate specific activity filter dropdown
+            const focusSelect = document.getElementById('kpi-activity-focus-select');
+            if (focusSelect) {
+                const prevVal = focusSelect.value;
+                focusSelect.innerHTML = '<option value="all">📈 แสดงทุกกิจกรรมในกราฟ</option>';
+                targetActs.forEach(act => {
+                    focusSelect.add(new Option(act.topic, act.id));
+                });
+                if (targetActs.some(a => a.id === prevVal)) {
+                    focusSelect.value = prevVal;
+                } else {
+                    focusSelect.value = 'all';
+                }
+            }
+
+            // Save filtered activities data for chart rendering
+            currentKPIData = targetActs.map(act => {
+                let actEmps = [];
+                if (act.participants === 'ALL' || !act.participants) {
+                    actEmps = [...employees];
+                } else if (Array.isArray(act.participants)) {
+                    actEmps = employees.filter(e => act.participants.includes(e.id));
+                }
+                const totalTarget = actEmps.length;
+                const doneEmps = [];
+                const pendingEmps = [];
+
+                actEmps.forEach(emp => {
+                    const isDone = checkIns.some(c => c.empId === emp.id && c.activityId === act.id);
+                    if (isDone) doneEmps.push(emp);
+                    else pendingEmps.push(emp);
+                });
+
+                const targetDate = getActTargetDate(act);
+                const isClosed = targetDate && now >= targetDate;
+                const rate = totalTarget > 0 ? Math.round((doneEmps.length / totalTarget) * 100) : 0;
+
+                return {
+                    id: act.id,
+                    topic: act.topic,
+                    isClosed: isClosed,
+                    totalTarget: totalTarget,
+                    doneCount: doneEmps.length,
+                    pendingCount: pendingEmps.length,
+                    rate: rate,
+                    pendingEmps: pendingEmps,
+                    doneEmps: doneEmps
+                };
+            });
+
+            // Render interactive Chart.js chart
+            renderKPIChart();
+
+            // Render Department Leaderboard
+            const deptContainer = document.getElementById('kpi-dept-list');
+            if (deptContainer) {
+                deptContainer.innerHTML = '';
+                const sortedDepts = Object.keys(deptStats).map(name => {
+                    const info = deptStats[name];
+                    const rate = info.totalExpected > 0 ? Math.round((info.actualDone / info.totalExpected) * 100) : 0;
+                    return { name, ...info, rate };
+                }).sort((a, b) => b.rate - a.rate || b.actualDone - a.actualDone);
+
+                if (sortedDepts.length === 0 || totalExpectedChecks === 0) {
+                    deptContainer.innerHTML = '<div class="text-xs text-gray-400 py-8 text-center">ไม่มีข้อมูลพนักงานหรือกิจกรรมที่ตรงตามเงื่อนไข</div>';
+                } else {
+                    sortedDepts.forEach((dept, idx) => {
+                        const rankColor = idx === 0 ? 'bg-amber-400 text-white' : (idx === 1 ? 'bg-slate-300 text-slate-800' : (idx === 2 ? 'bg-amber-700/60 text-white' : 'bg-gray-100 text-gray-600'));
+                        const barColor = dept.rate >= 90 ? 'bg-emerald-500' : (dept.rate >= 70 ? 'bg-indigo-500' : (dept.rate >= 50 ? 'bg-amber-500' : 'bg-rose-500'));
+
+                        const item = document.createElement('div');
+                        item.className = 'p-3 rounded-xl border border-gray-100 hover:border-indigo-200 bg-gray-50/60 transition-all';
+                        item.innerHTML = `
+                            <div class="flex items-center justify-between mb-1.5">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-5 h-5 rounded-full ${rankColor} text-[10px] font-bold flex items-center justify-center shadow-2xs">${idx + 1}</span>
+                                    <span class="text-xs font-bold text-gray-800">${dept.name}</span>
+                                    <span class="text-[10px] text-gray-400">(${dept.totalEmployees || 0} คน)</span>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-xs font-extrabold text-gray-900">${dept.rate}%</span>
+                                    <span class="text-[10px] text-gray-500">(${dept.actualDone}/${dept.totalExpected})</span>
+                                </div>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
+                                <div class="${barColor} h-1.5 rounded-full transition-all duration-300" style="width: ${dept.rate}%"></div>
+                            </div>
+                        `;
+                        deptContainer.appendChild(item);
+                    });
+                }
+            }
+
+            // Render Activity Scorecard Table
+            const tbody = document.getElementById('kpi-activity-table-body');
+            if (tbody) {
+                tbody.innerHTML = '';
+                if (actRows.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="px-4 py-8 text-center text-gray-400 text-xs">ไม่มีกิจกรรมในหมวดนี้</td></tr>';
+                } else {
+                    actRows.sort((a,b) => b.rate - a.rate).forEach(act => {
+                        const tr = document.createElement('tr');
+                        tr.className = 'hover:bg-gray-50/70 transition-colors';
+                        const badgeStatus = act.isClosed 
+                            ? '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-100 text-rose-700">ปิดแล้ว</span>'
+                            : '<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700">เปิดอยู่</span>';
+
+                        const rateBadgeColor = act.rate === 100 
+                            ? 'bg-emerald-100 text-emerald-800 font-extrabold'
+                            : (act.rate >= 75 ? 'bg-blue-100 text-blue-800 font-bold' : (act.rate >= 50 ? 'bg-amber-100 text-amber-800 font-bold' : 'bg-rose-100 text-rose-800 font-bold'));
+
+                        tr.innerHTML = `
+                            <td class="px-3.5 py-3 whitespace-normal max-w-xs">
+                                <div class="font-bold text-gray-900 leading-snug break-words">${act.topic}</div>
+                                <div class="text-[10px] text-gray-400 mt-0.5">สิ้นสุด: ${act.endDate}</div>
+                            </td>
+                            <td class="px-3 py-3 text-center whitespace-nowrap">${badgeStatus}</td>
+                            <td class="px-3 py-3 text-center font-semibold text-gray-600">${act.target} คน</td>
+                            <td class="px-3 py-3 text-center font-bold text-emerald-600">${act.done} คน</td>
+                            <td class="px-3 py-3 text-center whitespace-nowrap">
+                                <span class="px-2.5 py-1 rounded-full text-[11px] ${rateBadgeColor}">${act.rate}%</span>
+                            </td>
+                            <td class="px-3 py-3 text-center whitespace-nowrap">
+                                <button type="button" onclick="exportActivityCSV('${act.id}')" class="px-2 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 rounded-lg text-xs font-semibold transition-colors flex items-center justify-center gap-1 mx-auto" title="ดาวน์โหลดรายงาน CSV">
+                                    <i class="fa-solid fa-file-csv"></i>
+                                    <span>CSV</span>
+                                </button>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+            }
+
+            // Render Missed Employees Ranking for Closed Activities
+            renderMissedEmployeesRanking();
         }
 
-        let empToDelete = null;
-        function openDeleteModal(id) {
-            empToDelete = id;
-            document.getElementById('delete-modal-title').textContent = 'ลบพนักงาน';
-            document.getElementById('delete-modal-msg').textContent = 'คุณแน่ใจหรือไม่ที่จะลบพนักงานคนนี้ออกจากระบบ?';
-            document.getElementById('delete-modal').classList.remove('hidden');
-            document.getElementById('btn-confirm-delete').onclick = async () => {
-                document.getElementById('delete-modal').classList.add('hidden');
-                employees = employees.filter(e => e.id !== empToDelete);
-                updateAllViews();
-                await sendToCloud({ action: 'deleteEmployee', id: empToDelete });
-                showToast('ลบพนักงานสำเร็จ', 'success');
-            };
-        }
+        function renderMissedEmployeesRanking() {
+            const listContainer = document.getElementById('kpi-missed-employees-list');
+            const summaryBadge = document.getElementById('kpi-missed-summary-badge');
+            if (!listContainer) return;
 
-        function openDeleteActivityModal() {
-            const actId = document.getElementById('setting-act-id').value;
-            if (!actId || actId === 'new') return;
-            const act = activities.find(a => a.id === actId);
-            if (!act) return;
+            const now = new Date();
+            const closedActs = activities.filter(act => {
+                const targetDate = getActTargetDate(act);
+                return targetDate && now >= targetDate;
+            });
 
-            document.getElementById('delete-modal-title').textContent = 'ลบกิจกรรม';
-            document.getElementById('delete-modal-msg').textContent = `คุณแน่ใจหรือไม่ที่จะลบกิจกรรม "${act.topic}" รวมถึงประวัติการเช็คชื่อทั้งหมดในกิจกรรมนี้?`;
-            document.getElementById('delete-modal').classList.remove('hidden');
-            document.getElementById('btn-confirm-delete').onclick = async () => {
-                document.getElementById('delete-modal').classList.add('hidden');
-                
-                activities = activities.filter(a => a.id !== actId);
-                checkIns = checkIns.filter(c => c.activityId !== actId);
+            if (closedActs.length === 0) {
+                if (summaryBadge) summaryBadge.textContent = 'ยังไม่มีโครงการปิด';
+                listContainer.innerHTML = `
+                    <div class="py-8 text-center text-gray-400 text-xs flex flex-col items-center justify-center">
+                        <i class="fa-regular fa-calendar-check text-2xl text-gray-300 mb-1.5"></i>
+                        <span>ยังไม่มีกิจกรรมที่ปิดโครงการในขณะนี้</span>
+                    </div>
+                `;
+                return;
+            }
 
-                updateAllViews();
-                document.getElementById('admin-activity-select').value = 'new';
-                changeAdminActivity();
-                
-                await sendToCloud({ action: 'deleteActivity', id: actId });
-                showToast('ลบกิจกรรมสำเร็จ', 'success');
-            };
-        }
+            // Map each employee to missed activities in closed projects
+            const empMissedData = [];
 
-        function closeDeleteModal() { document.getElementById('delete-modal').classList.add('hidden'); }
+            employees.forEach(emp => {
+                const assignedClosed = [];
+                const missedActs = [];
 
-        function renderEmployeeListAdmin() {
-            const list = document.getElementById('employee-list');
-            document.getElementById('emp-count-badge').textContent = employees.length;
-            list.innerHTML = '';
-            [...employees].sort((a,b) => a.name.localeCompare(b.name, 'th')).forEach(emp => {
-                list.innerHTML += `
-                    <div class="flex justify-between items-center p-3 hover:bg-gray-50/80 transition-colors">
-                        <div class="flex flex-col"><span class="text-xs md:text-sm font-semibold text-gray-800">${emp.name}</span><span class="text-xs text-gray-500">${emp.dept}</span></div>
-                        <button onclick="openDeleteModal('${emp.id}')" class="text-gray-400 hover:text-red-500 p-2 transition-colors"><i class="fa-solid fa-trash text-xs"></i></button>
-                    </div>`;
+                closedActs.forEach(act => {
+                    const isTarget = act.participants === 'ALL' || !act.participants || 
+                        (Array.isArray(act.participants) && act.participants.includes(emp.id));
+
+                    if (isTarget) {
+                        assignedClosed.push(act);
+                        const isDone = checkIns.some(c => c.empId === emp.id && c.activityId === act.id);
+                        if (!isDone) {
+                            missedActs.push(act);
+                        }
+                    }
+                });
+
+                if (missedActs.length > 0) {
+                    empMissedData.push({
+                        emp: emp,
+                        missedCount: missedActs.length,
+                        totalAssignedClosed: assignedClosed.length,
+                        missedActs: missedActs
+                    });
+                }
+            });
+
+            // Sort: highest missedCount first, then alphabetical by Thai name
+            empMissedData.sort((a, b) => b.missedCount - a.missedCount || a.emp.name.localeCompare(b.emp.name, 'th'));
+
+            if (summaryBadge) {
+                summaryBadge.textContent = `พบ ${empMissedData.length} คนที่ลืมทำ`;
+            }
+
+            if (empMissedData.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="p-6 text-center text-xs text-emerald-800 bg-emerald-50 rounded-xl border border-emerald-200 font-semibold flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-circle-check text-emerald-600 text-base"></i>
+                        <span>ยอดเยี่ยม! พนักงานทุกคนเช็คชื่อครบ 100% ในทุกกิจกรรมที่ปิดโครงการแล้ว</span>
+                    </div>
+                `;
+                return;
+            }
+
+            listContainer.innerHTML = '';
+            empMissedData.forEach((item, index) => {
+                const rank = index + 1;
+                const rankBadgeClass = rank === 1 ? 'bg-rose-500 text-white font-extrabold shadow-xs' :
+                                      rank === 2 ? 'bg-amber-500 text-white font-bold' :
+                                      rank === 3 ? 'bg-orange-400 text-white font-bold' :
+                                      'bg-gray-100 text-gray-700 font-semibold';
+
+                const missedTagsHtml = item.missedActs.map(act => `
+                    <span class="inline-flex items-center gap-1 text-[10px] bg-white text-rose-800 border border-rose-200 px-2 py-0.5 rounded-md font-medium shadow-2xs">
+                        <i class="fa-solid fa-clock-rotate-left text-rose-400 text-[9px]"></i>
+                        <span class="break-words">${act.topic}</span>
+                    </span>
+                `).join('');
+
+                const row = document.createElement('div');
+                row.className = 'p-3 bg-gray-50/70 hover:bg-rose-50/40 rounded-xl border border-gray-200 hover:border-rose-200 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-2.5';
+                row.innerHTML = `
+                    <div class="flex items-start sm:items-center gap-3 flex-1 min-w-0">
+                        <span class="w-6 h-6 rounded-full ${rankBadgeClass} text-xs flex items-center justify-center flex-shrink-0 mt-0.5 sm:mt-0">
+                            ${rank}
+                        </span>
+                        <div class="min-w-0 flex-1">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="text-xs sm:text-sm font-bold text-gray-800">${item.emp.name}</span>
+                                <span class="text-[11px] text-gray-500 bg-white px-2 py-0.5 rounded border border-gray-200">${item.emp.dept}</span>
+                            </div>
+                            <div class="flex flex-wrap gap-1 mt-1.5">
+                                <span class="text-[10px] text-gray-400 font-medium self-center mr-1">โครงการที่ลืมทำ:</span>
+                                ${missedTagsHtml}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex sm:flex-col items-center sm:items-end justify-between sm:justify-center border-t sm:border-t-0 pt-2 sm:pt-0 border-gray-100 flex-shrink-0">
+                        <span class="text-xs font-extrabold text-rose-600 bg-rose-100/80 px-2.5 py-1 rounded-lg border border-rose-200">
+                            ลืมทำ ${item.missedCount} / ${item.totalAssignedClosed} งาน
+                        </span>
+                    </div>
+                `;
+                listContainer.appendChild(row);
             });
         }
 
-        function exportToCSV(specificActId = null) {
-            let csv = '\uFEFFชื่อพนักงาน,แผนก,หัวข้อกิจกรรม,สถานะ,วันเวลาที่เช็คชื่อ\n';
-            const actFilter = specificActId || document.getElementById('report-activity-select').value;
-            
-            const formatDateTime = (ts) => {
-                if (!ts) return '-';
-                const d = new Date(ts);
-                return isNaN(d) ? ts : d.toLocaleString('th-TH');
-            };
+        function exportMissedEmployeesCSV() {
+            const now = new Date();
+            const closedActs = activities.filter(act => {
+                const targetDate = getActTargetDate(act);
+                return targetDate && now >= targetDate;
+            });
 
-            if (actFilter === 'all') {
-                checkIns.forEach(c => {
-                    const emp = employees.find(e => e.id === c.empId) || {name: '-', dept: '-'};
-                    const timeStr = formatDateTime(c.timestamp);
-                    csv += `"${emp.name}","${emp.dept}","${c.topic}","Done","${timeStr}"\n`;
-                });
-            } else {
-                const actName = activities.find(a => a.id === actFilter)?.topic || '';
-                employees.forEach(emp => {
-                    const check = checkIns.find(c => c.empId === emp.id && c.activityId === actFilter);
-                    const isDone = !!check;
-                    const timeStr = isDone ? formatDateTime(check.timestamp) : '-';
-                    csv += `"${emp.name}","${emp.dept}","${actName}","${isDone ? 'Done' : 'Pending'}","${timeStr}"\n`;
-                });
+            if (closedActs.length === 0) {
+                showToast('ยังไม่มีกิจกรรมที่ปิดโครงการ', 'error');
+                return;
             }
-            
+
+            let csv = '\uFEFFอันดับ,ชื่อพนักงาน,แผนก,จำนวนโครงการที่ลืมทำ,จำนวนโครงการที่ได้รับมอบหมาย,รายชื่อโครงการที่ค้างทำ\n';
+
+            const empMissedData = [];
+            employees.forEach(emp => {
+                const assignedClosed = [];
+                const missedActs = [];
+                closedActs.forEach(act => {
+                    const isTarget = act.participants === 'ALL' || !act.participants || 
+                        (Array.isArray(act.participants) && act.participants.includes(emp.id));
+                    if (isTarget) {
+                        assignedClosed.push(act);
+                        const isDone = checkIns.some(c => c.empId === emp.id && c.activityId === act.id);
+                        if (!isDone) missedActs.push(act);
+                    }
+                });
+                if (missedActs.length > 0) {
+                    empMissedData.push({
+                        emp: emp,
+                        missedCount: missedActs.length,
+                        totalAssigned: assignedClosed.length,
+                        missedActs: missedActs
+                    });
+                }
+            });
+
+            empMissedData.sort((a, b) => b.missedCount - a.missedCount || a.emp.name.localeCompare(b.emp.name, 'th'));
+
+            if (empMissedData.length === 0) {
+                showToast('ไม่มีพนักงานค้างทำในกิจกรรมที่ปิดแล้ว', 'success');
+                return;
+            }
+
+            empMissedData.forEach((item, idx) => {
+                const missedNames = item.missedActs.map(a => a.topic).join(' | ');
+                csv += `"${idx + 1}","${item.emp.name}","${item.emp.dept}","${item.missedCount}","${item.totalAssigned}","${missedNames}"\n`;
+            });
+
             const link = document.createElement("a");
             link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
-            link.download = `Report_${actFilter === 'all' ? 'All' : actFilter}_${Date.now()}.csv`;
+            link.download = `Missed_Employees_Closed_Projects_${Date.now()}.csv`;
             link.click();
+        }
+
+        function exportKPIScorecardCSV() {
+            const now = new Date();
+            let csv = '\uFEFFหัวข้อกิจกรรม,สถานะ,วันสิ้นสุด,เป้าหมาย (คน),ทำแล้ว (คน),ค้างทำ (คน),อัตราความสำเร็จ (%)\n';
+
+            activities.forEach(act => {
+                const targetDate = getActTargetDate(act);
+                const isClosed = targetDate && now >= targetDate;
+
+                let actEmps = [];
+                if (act.participants === 'ALL' || !act.participants) {
+                    actEmps = [...employees];
+                } else if (Array.isArray(act.participants)) {
+                    actEmps = employees.filter(e => act.participants.includes(e.id));
+                }
+
+                const targetCount = actEmps.length;
+                let doneCount = 0;
+                actEmps.forEach(emp => {
+                    if (checkIns.some(c => c.empId === emp.id && c.activityId === act.id)) {
+                        doneCount++;
+                    }
+                });
+
+                const pendingCount = targetCount - doneCount;
+                const rate = targetCount > 0 ? Math.round((doneCount / targetCount) * 100) : 0;
+                
+                let statusStr = '';
+                if (isClosed) {
+                    statusStr = pendingCount === 0 ? '🏆 บรรลุ 100% (สำเร็จ)' : `⚠️ ปิดแล้ว (ค้าง ${pendingCount} คน)`;
+                } else {
+                    statusStr = '🟢 กำลังเปิดรับ';
+                }
+
+                csv += `"${act.topic}","${statusStr}","${act.endDate || '-'}","${targetCount}","${doneCount}","${pendingCount}","${rate}%"\n`;
+            });
+
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+            link.download = `KPI_Report_Summary_${Date.now()}.csv`;
+            link.click();
+        }
+
+        function setChartStatusFilter(status) {
+            chartStatusFilter = status;
+            ['all', 'ongoing', 'closed', 'completed'].forEach(s => {
+                const btn = document.getElementById(`btn-chart-filter-${s}`);
+                if (!btn) return;
+                if (s === status) {
+                    btn.className = "px-3 py-1.5 rounded-lg font-bold bg-white text-indigo-700 shadow-xs transition-all flex items-center gap-1";
+                } else {
+                    btn.className = "px-3 py-1.5 rounded-lg font-medium text-gray-600 hover:text-gray-900 transition-all flex items-center gap-1";
+                }
+            });
+            renderKPIChart();
+        }
+
+        function renderKPIChart() {
+            const canvas = document.getElementById('kpi-activities-chart');
+            if (!canvas) return;
+
+            const focusSelect = document.getElementById('kpi-activity-focus-select');
+            const focusId = focusSelect ? focusSelect.value : 'all';
+
+            let rawData = [...currentKPIData];
+
+            // Filter if specific activity selected
+            if (focusId && focusId !== 'all') {
+                rawData = rawData.filter(d => d.id === focusId);
+            }
+
+            if (rawData.length === 0) {
+                if (kpiChartInstance) kpiChartInstance.destroy();
+                return;
+            }
+
+            // Sort: Ongoing (Active/Not Finished) projects on the left, Closed on the right
+            rawData.sort((a, b) => {
+                if (!a.isClosed && b.isClosed) return -1;
+                if (a.isClosed && !b.isClosed) return 1;
+                return 0;
+            });
+
+            // Clean, full activity names for X-Axis (no clipping)
+            const labels = rawData.map(d => d.topic);
+
+            const doneData = rawData.map(d => d.doneCount);
+            const pendingData = rawData.map(d => Math.max(0, d.totalTarget - d.doneCount));
+
+            // Plugin to draw distinct background zone boxes behind bars
+            const zoneBackgroundPlugin = {
+                id: 'zoneBackgroundPlugin',
+                beforeDraw: (chart) => {
+                    const { ctx, chartArea: { top, bottom, height }, scales: { x } } = chart;
+                    if (!x || rawData.length === 0) return;
+
+                    ctx.save();
+                    const count = rawData.length;
+
+                    // Identify segments of ongoing vs closed
+                    let ongoingStart = -1, ongoingEnd = -1;
+                    let closedStart = -1, closedEnd = -1;
+
+                    for (let i = 0; i < count; i++) {
+                        if (!rawData[i].isClosed) {
+                            if (ongoingStart === -1) ongoingStart = i;
+                            ongoingEnd = i;
+                        } else {
+                            if (closedStart === -1) closedStart = i;
+                            closedEnd = i;
+                        }
+                    }
+
+                    const getLeft = (idx) => idx === 0 ? x.left : (x.getPixelForValue(idx) + x.getPixelForValue(idx - 1)) / 2;
+                    const getRight = (idx) => idx === count - 1 ? x.right : (x.getPixelForValue(idx) + x.getPixelForValue(idx + 1)) / 2;
+
+                    // 1. Draw Ongoing Zone (Green/Teal Tint)
+                    if (ongoingStart !== -1) {
+                        const xLeft = getLeft(ongoingStart);
+                        const xRight = getRight(ongoingEnd);
+                        const w = xRight - xLeft;
+
+                        // Fill background box
+                        ctx.fillStyle = 'rgba(236, 253, 245, 0.75)'; // Soft emerald tint
+                        ctx.beginPath();
+                        ctx.roundRect ? ctx.roundRect(xLeft + 3, top, w - 6, height, 10) : ctx.rect(xLeft + 3, top, w - 6, height);
+                        ctx.fill();
+
+                        // Border outline
+                        ctx.strokeStyle = 'rgba(52, 211, 153, 0.6)';
+                        ctx.lineWidth = 1.5;
+                        ctx.stroke();
+
+                        // Zone Tag Banner at top (วาดเหนือเพดานแท่งกราฟ ไม่ให้กราฟมาบัง)
+                        ctx.fillStyle = 'rgba(16, 185, 129, 0.95)';
+                        const bannerW = Math.min(220, w - 16);
+                        const bannerX = xLeft + (w - bannerW) / 2;
+                        if (bannerW > 80) {
+                            ctx.beginPath();
+                            ctx.roundRect ? ctx.roundRect(bannerX, top - 36, bannerW, 26, 6) : ctx.rect(bannerX, top - 36, bannerW, 26);
+                            ctx.fill();
+
+                            ctx.fillStyle = '#ffffff';
+                            ctx.font = 'bold 12px Sarabun, sans-serif';
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+                            ctx.fillText('🟢 โครงการที่กำลังทำอยู่', bannerX + bannerW / 2, top - 23);
+                        }
+                    }
+
+                    // 2. Draw Closed Zone (Slate/Gray Tint)
+                    if (closedStart !== -1) {
+                        const xLeft = getLeft(closedStart);
+                        const xRight = getRight(closedEnd);
+                        const w = xRight - xLeft;
+
+                        // Fill background box
+                        ctx.fillStyle = 'rgba(241, 245, 249, 0.75)'; // Soft slate tint
+                        ctx.beginPath();
+                        ctx.roundRect ? ctx.roundRect(xLeft + 3, top, w - 6, height, 10) : ctx.rect(xLeft + 3, top, w - 6, height);
+                        ctx.fill();
+
+                        // Border outline
+                        ctx.strokeStyle = 'rgba(203, 213, 225, 0.8)';
+                        ctx.lineWidth = 1.5;
+                        ctx.stroke();
+
+                        // Zone Tag Banner at top (วาดเหนือเพดานแท่งกราฟ ไม่ให้กราฟมาบัง)
+                        ctx.fillStyle = 'rgba(100, 116, 139, 0.95)';
+                        const bannerW = Math.min(180, w - 16);
+                        const bannerX = xLeft + (w - bannerW) / 2;
+                        if (bannerW > 70) {
+                            ctx.beginPath();
+                            ctx.roundRect ? ctx.roundRect(bannerX, top - 36, bannerW, 26, 6) : ctx.rect(bannerX, top - 36, bannerW, 26);
+                            ctx.fill();
+
+                            ctx.fillStyle = '#ffffff';
+                            ctx.font = 'bold 12px Sarabun, sans-serif';
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+                            ctx.fillText('📁 โครงการที่ปิดแล้ว', bannerX + bannerW / 2, top - 23);
+                        }
+                    }
+
+                    ctx.restore();
+                }
+            };
+
+            if (kpiChartInstance) {
+                kpiChartInstance.destroy();
+            }
+
+            // คำนวณค่าสูงสุดเพื่อเว้นพื้นที่ว่างด้านบน ไม่ให้แท่งกราฟพุ่งขึ้นไปชนหรือบังแบนเนอร์
+            const maxVal = Math.max(...rawData.map(d => d.totalTarget), 5);
+            const chartCeiling = Math.ceil(maxVal * 1.25); // เผื่อพื้นที่ว่างด้านบน 25%
+
+            const ctx = canvas.getContext('2d');
+            kpiChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'ทำแล้ว (Done)',
+                            data: doneData,
+                            backgroundColor: '#10b981', // Solid clean Emerald Green
+                            borderColor: '#059669',
+                            borderWidth: 1.5,
+                            borderRadius: { topLeft: 0, topRight: 0, bottomLeft: 6, bottomRight: 6 },
+                            barPercentage: 0.55,
+                            categoryPercentage: 0.65
+                        },
+                        {
+                            label: 'ยังไม่ทำ (Pending)',
+                            data: pendingData,
+                            backgroundColor: '#f59e0b', // Solid Amber/Orange
+                            borderColor: '#d97706',
+                            borderWidth: 1.5,
+                            borderRadius: { topLeft: 6, topRight: 6, bottomLeft: 0, bottomRight: 0 },
+                            barPercentage: 0.55,
+                            categoryPercentage: 0.65
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: { top: 45, bottom: 10, left: 5, right: 5 } // เว้นพื้นที่ด้านบน 45px ให้แบนเนอร์ชื่อโครงการ
+                    },
+                    scales: {
+                        x: {
+                            stacked: true,
+                            grid: { display: false },
+                            ticks: {
+                                autoSkip: false,
+                                minRotation: 90,
+                                maxRotation: 90,
+                                font: { family: "'Sarabun', sans-serif", size: 11, weight: '500' },
+                                color: '#334155',
+                                callback: function(value, index) {
+                                    const name = rawData[index] ? rawData[index].topic : '';
+                                    return name.length > 25 ? name.substring(0, 24) + '…' : name;
+                                }
+                            }
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            suggestedMax: chartCeiling, // เพดานแกน Y สูงขึ้น 25% ทำให้แท่งกราฟไม่สูงชนแบนเนอร์
+                            grid: { color: 'rgba(226, 232, 240, 0.6)' },
+                            ticks: {
+                                precision: 0,
+                                font: { family: "'Sarabun', sans-serif", size: 11 },
+                                color: '#64748b'
+                            },
+                            title: {
+                                display: true,
+                                text: 'จำนวนคน (เป้าหมายทั้งหมด)',
+                                font: { family: "'Sarabun', sans-serif", size: 11, weight: 'bold' },
+                                color: '#475569'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                            titleFont: { family: "'Sarabun', sans-serif", size: 13, weight: 'bold' },
+                            bodyFont: { family: "'Sarabun', sans-serif", size: 12 },
+                            padding: 12,
+                            cornerRadius: 10,
+                            callbacks: {
+                                title: function(context) {
+                                    const index = context[0].dataIndex;
+                                    const item = rawData[index];
+                                    if (!item) return '';
+                                    const zoneStr = item.isClosed ? '📁 [โครงการที่ปิดแล้ว]' : '🟢 [โครงการที่กำลังทำอยู่]';
+                                    return `${zoneStr}\n${item.topic}`;
+                                },
+                                label: function(context) {
+                                    const index = context.dataIndex;
+                                    const item = rawData[index];
+                                    if (!item) return '';
+                                    if (context.datasetIndex === 0) {
+                                        return `🟢 ทำแล้ว: ${item.doneCount} คน (${item.rate}%)`;
+                                    } else {
+                                        return `🟠 ยังไม่ทำ: ${item.pendingCount} คน (เป้าหมายรวม ${item.totalTarget} คน)`;
+                                    }
+                                },
+                                afterBody: function(context) {
+                                    const index = context[0].dataIndex;
+                                    const item = rawData[index];
+                                    if (!item) return [];
+
+                                    const lines = [];
+                                    lines.push(`🎯 เป้าหมายทั้งหมด: ${item.totalTarget} คน`);
+                                    lines.push('────────────────────────');
+
+                                    if (item.pendingEmps.length === 0) {
+                                        lines.push('🎉 ครบทุกคนแล้ว (100%)');
+                                    } else {
+                                        lines.push(`⏳ รายชื่อคนที่ยังไม่ทำ (${item.pendingEmps.length} คน):`);
+                                        const previewList = item.pendingEmps.slice(0, 5);
+                                        previewList.forEach(p => {
+                                            lines.push(`  • ${p.name} (${p.dept})`);
+                                        });
+                                        if (item.pendingEmps.length > 5) {
+                                            lines.push(`  ...และอีก ${item.pendingEmps.length - 5} คน`);
+                                        }
+                                        lines.push('👉 คลิกแท่งกราฟเพื่อดูรายชื่อทั้งหมดด้านล่าง');
+                                    }
+                                    return lines;
+                                }
+                            }
+                        }
+                    },
+                    onClick: function(evt, elements) {
+                        if (!elements || elements.length === 0) return;
+                        const elementIndex = elements[0].index;
+                        const selectedItem = rawData[elementIndex];
+                        if (selectedItem) {
+                            showInspectorPanel(selectedItem);
+                        }
+                    }
+                },
+                plugins: [zoneBackgroundPlugin]
+            });
+        }
+
+        function showInspectorPanel(item) {
+            const panel = document.getElementById('chart-inspector-panel');
+            const titleEl = document.getElementById('inspector-act-title');
+            const badgeEl = document.getElementById('inspector-stats-badge');
+            const namesListEl = document.getElementById('inspector-names-list');
+            if (!panel || !titleEl || !badgeEl || !namesListEl) return;
+
+            titleEl.textContent = item.topic;
+
+            // Idea 4 badge for inspector panel
+            let statusBadge = '';
+            if (item.isClosed) {
+                if (item.pendingCount === 0) {
+                    statusBadge = '<span class="px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-600 text-white shadow-xs inline-flex items-center gap-1.5"><i class="fa-solid fa-trophy"></i> 🏆 บรรลุ 100% (สำเร็จ)</span>';
+                } else {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-md text-xs font-bold bg-amber-600 text-white shadow-xs inline-flex items-center gap-1.5"><i class="fa-solid fa-triangle-exclamation"></i> ⚠️ ปิดแล้ว (ค้าง ${item.pendingCount} คน)</span>`;
+                }
+            } else {
+                statusBadge = '<span class="px-2.5 py-1 rounded-md text-xs font-bold bg-indigo-600 text-white shadow-xs inline-flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-ping"></span> 🟢 กำลังเปิดรับ</span>';
+            }
+
+            badgeEl.innerHTML = `<div class="flex flex-wrap items-center gap-2">${statusBadge} <span class="text-xs text-gray-700 font-semibold">ทำแล้ว ${item.doneCount}/${item.totalTarget} คน (${item.rate}%)</span></div>`;
+
+            namesListEl.innerHTML = '';
+            if (item.pendingEmps.length === 0) {
+                namesListEl.innerHTML = '<span class="text-emerald-700 bg-emerald-100 font-bold px-3 py-1.5 rounded-lg flex items-center gap-1.5"><i class="fa-solid fa-trophy text-emerald-600"></i> ยินดีด้วย! กิจกรรมนี้พนักงานทำครบทุกคนเรียบร้อยแล้ว</span>';
+            } else {
+                item.pendingEmps.sort((a,b) => a.name.localeCompare(b.name, 'th')).forEach(emp => {
+                    const tag = document.createElement('span');
+                    tag.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 bg-white border border-amber-300 rounded-lg text-amber-950 font-medium shadow-2xs text-xs';
+                    tag.innerHTML = `<i class="fa-regular fa-circle-xmark text-rose-500 text-[11px]"></i> <span>${emp.name}</span> <span class="text-[10px] text-amber-700 font-normal">(${emp.dept})</span>`;
+                    namesListEl.appendChild(tag);
+                });
+            }
+
+            panel.classList.remove('hidden');
+            panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
         function showToast(message, type = 'success') {
