@@ -60,25 +60,27 @@
         <!-- USER VIEW -->
         <section id="view-checkin" class="bg-white rounded-b-xl rounded-tr-xl shadow-xs p-4 sm:p-6 md:p-8 animate-[slideInRight_0.2s_ease-out]">
             <div class="max-w-5xl mx-auto">
-                <!-- Main Activity Overview & 1-Tap Selector (4 Cards visible without scrolling) -->
+                <!-- Main Activity Overview & 1-Tap Selector -->
                 <div class="mb-6 bg-gradient-to-br from-indigo-50/90 via-white to-blue-50/80 p-4 sm:p-5 rounded-2xl border border-indigo-100 shadow-xs">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 mb-3.5">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3.5">
                         <div class="flex items-center gap-2">
                             <span class="flex h-2.5 w-2.5 relative flex-shrink-0">
                                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
                                 <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-indigo-600"></span>
                             </span>
-                            <span class="text-xs md:text-sm font-bold text-indigo-950 flex items-center gap-1.5 uppercase tracking-wide">
-                                <i class="fa-solid fa-list-check text-indigo-600"></i> เลือกกิจกรรมที่ต้องการเช็คชื่อ (<span id="user-act-count">0</span>)
+                            <span class="text-xs sm:text-sm font-bold text-indigo-950 flex items-center gap-1.5 uppercase tracking-wide">
+                                <i class="fa-solid fa-list-check text-indigo-600"></i>
+                                <span>เลือกกิจกรรมที่ต้องการเช็คชื่อ</span>
+                                <span id="user-act-count" class="bg-indigo-600 text-white text-[11px] px-2 py-0.5 rounded-full font-bold">0</span>
                             </span>
                         </div>
-                        <span class="text-xs text-indigo-600 font-medium flex items-center gap-1 self-start sm:self-auto">
+                        <span class="text-xs text-indigo-600 font-semibold flex items-center gap-1">
                             <i class="fa-solid fa-arrow-pointer"></i> แตะการ์ดเพื่อเลือก
                         </span>
                     </div>
                     
-                    <!-- Activity Cards Container (Responsive: 1 col on mobile, 2 cols on tablet, 4 cols on desktop) -->
-                    <div id="mini-dashboard-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+                    <!-- Activity Cards Container: 2 cols on mobile (left-to-right), 2 on tablet, 4 on desktop -->
+                    <div id="mini-dashboard-container" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 items-stretch">
                         <!-- Populated dynamically via JS -->
                     </div>
                 </div>
@@ -89,21 +91,32 @@
 
                     <!-- Active Activity Details & Countdown Header -->
                     <div class="mb-6 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white p-5 rounded-2xl shadow-sm relative overflow-hidden">
-                        <div class="absolute -right-4 -bottom-6 opacity-10 text-8xl text-white">
+                        <div class="absolute -right-4 -bottom-6 opacity-10 text-8xl text-white pointer-events-none">
                             <i class="fa-solid fa-calendar-check"></i>
                         </div>
 
                         <div class="relative z-10">
-                            <div class="flex items-center gap-2 mb-1.5">
+                            <div class="flex items-center gap-2 mb-2">
                                 <span class="bg-indigo-500/60 text-indigo-100 text-xs font-bold px-2.5 py-0.5 rounded-full border border-indigo-400/40">
                                     กำลังเช็คชื่อกิจกรรม
                                 </span>
                             </div>
-                            <h2 id="current-selected-topic" class="text-base sm:text-lg md:text-xl font-bold text-white tracking-wide break-words whitespace-normal leading-snug">
+                            
+                            <!-- Activity Title: Full wrapping without ellipsis -->
+                            <h2 id="current-selected-topic" class="text-base sm:text-lg md:text-xl font-bold text-white tracking-wide break-words break-all whitespace-normal leading-snug">
                                 -
                             </h2>
 
-                            <div class="flex items-center gap-4 text-xs md:text-sm text-indigo-100 mt-2">
+                            <!-- Selected Activity Remark Banner (NEW) -->
+                            <div id="display-selected-remark" class="hidden mt-3 p-3 bg-amber-400/20 border border-amber-300/40 rounded-xl text-amber-100 text-xs sm:text-sm font-medium flex items-start gap-2.5">
+                                <i class="fa-solid fa-tag text-amber-300 mt-0.5 flex-shrink-0 text-sm"></i>
+                                <div>
+                                    <span class="font-bold text-amber-200 mr-1">หมายเหตุ:</span>
+                                    <span id="display-selected-remark-text" class="break-words break-all whitespace-normal text-white font-medium leading-relaxed"></span>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-wrap items-center gap-3 sm:gap-4 text-xs md:text-sm text-indigo-100 mt-3">
                                 <span id="display-date-start"><i class="fa-regular fa-calendar mr-1"></i> -</span>
                                 <span class="text-indigo-300"><i class="fa-solid fa-arrow-right"></i></span>
                                 <span id="display-date-end"><i class="fa-regular fa-calendar-check mr-1"></i> -</span>
@@ -203,7 +216,7 @@
                     </button>
                 </div>
 
-                <!-- SUB-VIEW 1: MAIN DASHBOARD (EXPANDED DESKTOP 12-COLUMN GRID) -->
+                <!-- SUB-VIEW 1: MAIN DASHBOARD -->
                 <div id="admin-subview-main" class="grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start">
                     
                     <!-- Left Column: Activity Mgmt & Employee Mgmt (lg:col-span-5) -->
@@ -220,7 +233,7 @@
                                 </button>
                             </div>
 
-                            <!-- Dual Category Tabs: กิจกรรมที่ทำอยู่ VS กิจกรรมที่หมดเวลาแล้ว -->
+                            <!-- Dual Category Tabs: Ongoing VS Expired -->
                             <div class="mb-3.5 bg-gray-200/80 p-1 rounded-xl flex gap-1 text-xs">
                                 <button type="button" id="admin-act-tab-ongoing" onclick="switchAdminActCategory('ongoing')" class="flex-1 py-2 px-3 rounded-lg transition-all bg-white text-indigo-700 shadow-xs flex items-center justify-center gap-2 font-bold">
                                     <span class="flex h-2 w-2 relative">
@@ -237,21 +250,21 @@
                                 </button>
                             </div>
 
-                            <!-- Category 1 Container: Ongoing Activities -->
+                            <!-- Category 1: Ongoing Activities -->
                             <div id="admin-container-ongoing" class="mb-4">
                                 <div id="admin-list-ongoing" class="max-h-64 overflow-y-auto divide-y divide-gray-100 custom-scrollbar border border-indigo-100 rounded-xl bg-white shadow-xs">
                                     <!-- Populated dynamically via JS -->
                                 </div>
                             </div>
 
-                            <!-- Category 2 Container: Expired Activities -->
+                            <!-- Category 2: Expired Activities -->
                             <div id="admin-container-expired" class="mb-4 hidden">
                                 <div id="admin-list-expired" class="max-h-64 overflow-y-auto divide-y divide-gray-100 custom-scrollbar border border-rose-100 rounded-xl bg-white shadow-xs">
                                     <!-- Populated dynamically via JS -->
                                 </div>
                             </div>
 
-                            <!-- Form Header & Activity Edit Form (Collapsible / Dropdown Style) -->
+                            <!-- Form Drawer Header -->
                             <div class="pt-3 border-t border-gray-200">
                                 <button type="button" onclick="toggleActivityFormDrawer()" class="w-full flex items-center justify-between p-3.5 bg-white hover:bg-indigo-50/50 rounded-xl border border-gray-200 text-left transition-all shadow-xs group">
                                     <div class="flex items-center gap-3">
@@ -275,7 +288,7 @@
                                     </div>
                                 </button>
 
-                                <!-- Collapsible Form Drawer (Hidden by default to save space) -->
+                                <!-- Collapsible Form Drawer -->
                                 <div id="admin-form-drawer" class="hidden mt-3 p-4 bg-white rounded-xl border border-indigo-100 shadow-sm space-y-3.5">
                                     <div class="flex items-center justify-between pb-2 border-b border-gray-100">
                                         <span class="text-xs font-semibold text-gray-600">เลือกรายการที่ต้องการแก้ไข:</span>
@@ -417,7 +430,7 @@
                                 </div>
                             </div>
 
-                            <!-- Data Table with spacious paddings -->
+                            <!-- Data Table -->
                             <div class="overflow-x-auto border border-gray-200 rounded-xl shadow-xs">
                                 <table class="min-w-full divide-y divide-gray-200 text-xs md:text-sm">
                                     <thead class="bg-gray-50/90 text-gray-600 uppercase text-[11px] font-bold tracking-wider">
@@ -526,7 +539,7 @@
         let adminEmail1 = "";
         let adminEmail2 = "";
         let timerInterval = null;
-        let currentAdminActCategory = 'ongoing'; // 'ongoing' หรือ 'expired'
+        let currentAdminActCategory = 'ongoing';
 
         window.onload = async () => {
             const scriptUrlInput = document.getElementById('setting-script-url');
@@ -537,7 +550,6 @@
             timerInterval = setInterval(updateCountdownTimer, 1000);
         };
 
-        // ฟังก์ชันแปลงวันที่และเวลาสิ้นสุดกิจกรรมอย่างแม่นยำ ป้องกัน Invalid Date และ NaN
         function getActTargetDate(act) {
             if (!act || !act.endDate) return null;
 
@@ -547,7 +559,6 @@
             const rawDate = String(act.endDate).trim();
             let d = new Date(rawDate);
 
-            // หาก Date ตรง ๆ ไม่ผ่าน ให้ลองตัดแยกตาม Pattern วันที่
             if (isNaN(d.getTime())) {
                 const isoMatch = rawDate.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
                 if (isoMatch) {
@@ -556,7 +567,7 @@
                     const dmyMatch = rawDate.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})/);
                     if (dmyMatch) {
                         let year = parseInt(dmyMatch[3], 10);
-                        if (year > 2400) year -= 543; // รองรับปี พ.ศ.
+                        if (year > 2400) year -= 543;
                         d = new Date(year, parseInt(dmyMatch[2], 10) - 1, parseInt(dmyMatch[1], 10));
                     }
                 }
@@ -734,7 +745,6 @@
                 return;
             }
 
-            // Find ongoing activities (within time deadline)
             const now = new Date();
             const ongoingActs = activities.filter(a => {
                 const targetDate = getActTargetDate(a);
@@ -784,7 +794,6 @@
             renderMiniDashboard();
         }
 
-        // Toggle collapsible form drawer in Admin view
         function toggleActivityFormDrawer(forceOpen = null) {
             const drawer = document.getElementById('admin-form-drawer');
             const chevron = document.getElementById('admin-form-chevron');
@@ -825,6 +834,16 @@
             const topicEl = document.getElementById('current-selected-topic');
             if (topicEl) {
                 topicEl.textContent = act ? act.topic : '-';
+            }
+
+            // Update Remark Banner in Active Activity View
+            const remarkBanner = document.getElementById('display-selected-remark');
+            const remarkTextEl = document.getElementById('display-selected-remark-text');
+            if (act && act.remark && act.remark.trim() !== '') {
+                if (remarkBanner) remarkBanner.classList.remove('hidden');
+                if (remarkTextEl) remarkTextEl.textContent = act.remark.trim();
+            } else {
+                if (remarkBanner) remarkBanner.classList.add('hidden');
             }
 
             const startEl = document.getElementById('display-date-start');
@@ -899,7 +918,6 @@
             renderReport();
         }
 
-        // สลับหมวดหมู่กิจกรรมในหน้า Admin (กิจกรรมที่ทำอยู่ vs หมดเวลาแล้ว)
         function switchAdminActCategory(category) {
             currentAdminActCategory = category;
             const ongoingBtn = document.getElementById('admin-act-tab-ongoing');
@@ -922,7 +940,6 @@
             }
         }
 
-        // ฟังก์ชันแยกหมวดหมู่และแสดงรายการกิจกรรม (Ongoing vs Expired) พร้อมปุ่ม Export CSV
         function renderAdminActivityCategories() {
             const ongoingList = document.getElementById('admin-list-ongoing');
             const expiredList = document.getElementById('admin-list-expired');
@@ -949,7 +966,6 @@
             if (badgeOngoing) badgeOngoing.textContent = ongoingActs.length;
             if (badgeExpired) badgeExpired.textContent = expiredActs.length;
 
-            // 1. เรนเดอร์หมวด "กิจกรรมที่ทำอยู่"
             if (ongoingActs.length === 0) {
                 ongoingList.innerHTML = '<div class="text-xs md:text-sm text-gray-400 text-center py-6">ไม่มีกิจกรรมที่กำลังทำอยู่ในขณะนี้</div>';
             } else {
@@ -966,7 +982,7 @@
                     item.innerHTML = `
                         <div class="min-w-0 flex-1 pr-2 cursor-pointer" onclick="selectActivityToEdit('${act.id}')">
                             <div class="flex items-center gap-2 flex-wrap">
-                                <span class="text-xs md:text-sm font-bold text-gray-800 truncate" title="${act.topic}">${act.topic}</span>
+                                <span class="text-xs md:text-sm font-bold text-gray-800 break-words">${act.topic}</span>
                                 ${act.isDefault ? '<span class="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">หลัก</span>' : ''}
                             </div>
                             <div class="flex items-center gap-2 text-xs text-gray-500 mt-1">
@@ -974,20 +990,17 @@
                                 <span>•</span>
                                 <span class="text-indigo-600 font-bold">${doneCount}/${totalTarget} คน (${percent}%)</span>
                             </div>
-                            ${act.remark ? `<div class="text-xs text-amber-700 truncate mt-1 bg-amber-50 px-2 py-0.5 rounded border border-amber-200/50 inline-block"><i class="fa-solid fa-tag text-[10px] mr-1 text-amber-500"></i>${act.remark}</div>` : ''}
+                            ${act.remark ? `<div class="text-xs text-amber-700 mt-1 bg-amber-50 px-2 py-0.5 rounded border border-amber-200/50 inline-block break-words"><i class="fa-solid fa-tag text-[10px] mr-1 text-amber-500"></i>${act.remark}</div>` : ''}
                         </div>
                         <div class="flex items-center gap-1.5 flex-shrink-0">
-                            <!-- ปุ่ม Export CSV กิจกรรมนี้ -->
-                            <button type="button" onclick="exportActivityCSV('${act.id}')" class="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1" title="ดาวน์โหลด CSV กิจกรรมนี้">
+                            <button type="button" onclick="exportActivityCSV('${act.id}')" class="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1" title="ดาวน์โหลด CSV">
                                 <i class="fa-solid fa-file-csv"></i>
                                 <span class="hidden sm:inline">CSV</span>
                             </button>
-                            <!-- ปุ่มแก้ไขกิจกรรม -->
-                            <button type="button" onclick="selectActivityToEdit('${act.id}')" class="p-1.5 px-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-lg text-xs font-medium transition-colors" title="แก้ไขกิจกรรมนี้">
+                            <button type="button" onclick="selectActivityToEdit('${act.id}')" class="p-1.5 px-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-lg text-xs font-medium transition-colors" title="แก้ไข">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
-                            <!-- ปุ่มปิดงานก่อนกำหนด -->
-                            <button type="button" onclick="closeActivityNow('${act.id}')" class="px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-lg text-xs font-medium transition-colors" title="ปิดกิจกรรมก่อนกำหนด">
+                            <button type="button" onclick="closeActivityNow('${act.id}')" class="px-2.5 py-1.5 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-lg text-xs font-medium transition-colors" title="ปิดก่อนกำหนด">
                                 <i class="fa-solid fa-flag-checkered mr-1"></i>ปิดงาน
                             </button>
                         </div>
@@ -996,7 +1009,6 @@
                 });
             }
 
-            // 2. เรนเดอร์หมวด "กิจกรรมที่หมดเวลาแล้ว"
             if (expiredActs.length === 0) {
                 expiredList.innerHTML = '<div class="text-xs md:text-sm text-gray-400 text-center py-6">ยังไม่มีกิจกรรมที่หมดเวลา</div>';
             } else {
@@ -1007,7 +1019,7 @@
                     item.innerHTML = `
                         <div class="min-w-0 flex-1 pr-2 cursor-pointer" onclick="selectActivityToEdit('${act.id}')">
                             <div class="flex items-center gap-2 flex-wrap">
-                                <span class="text-xs md:text-sm font-semibold text-gray-700 truncate" title="${act.topic}">${act.topic}</span>
+                                <span class="text-xs md:text-sm font-semibold text-gray-700 break-words">${act.topic}</span>
                                 <span class="text-[10px] px-2 py-0.5 rounded-full font-bold bg-rose-100 text-rose-700">
                                     ⏰ หมดเวลา
                                 </span>
@@ -1017,22 +1029,18 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-1.5 flex-shrink-0">
-                            <!-- ปุ่ม Export CSV กิจกรรมนี้ -->
-                            <button type="button" onclick="exportActivityCSV('${act.id}')" class="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1" title="ดาวน์โหลด CSV กิจกรรมนี้">
+                            <button type="button" onclick="exportActivityCSV('${act.id}')" class="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1">
                                 <i class="fa-solid fa-file-csv"></i>
                                 <span class="hidden sm:inline">CSV</span>
                             </button>
-                            <!-- ปุ่มขยายเวลา / นำกลับมาเปิดใหม่ -->
-                            <button type="button" onclick="reopenActivity('${act.id}')" class="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-300 rounded-lg text-xs font-bold transition-colors flex items-center gap-1" title="ขยายเวลาและเปิดแสดงใหม่">
+                            <button type="button" onclick="reopenActivity('${act.id}')" class="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-300 rounded-lg text-xs font-bold transition-colors flex items-center gap-1">
                                 <i class="fa-solid fa-rotate"></i>
                                 <span>เปิดใหม่</span>
                             </button>
-                            <!-- ปุ่มแก้ไข -->
-                            <button type="button" onclick="selectActivityToEdit('${act.id}')" class="p-1.5 px-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors text-xs" title="แก้ไขข้อมูล">
+                            <button type="button" onclick="selectActivityToEdit('${act.id}')" class="p-1.5 px-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors text-xs">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
-                            <!-- ปุ่มลบ -->
-                            <button type="button" onclick="selectActivityToEdit('${act.id}'); openDeleteActivityModal();" class="p-1.5 px-2 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors text-xs" title="ลบกิจกรรมนี้">
+                            <button type="button" onclick="selectActivityToEdit('${act.id}'); openDeleteActivityModal();" class="p-1.5 px-2 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors text-xs">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </div>
@@ -1042,7 +1050,6 @@
             }
         }
 
-        // ปุ่มลัด: ปิดกิจกรรมทันที (ย้ายไปหมวดหมดเวลา)
         async function closeActivityNow(actId) {
             const act = activities.find(a => a.id === actId);
             if (!act) return;
@@ -1068,7 +1075,6 @@
             });
         }
 
-        // ปุ่มลัด: นำกิจกรรมที่หมดเวลาแล้วกลับมาเปิดใหม่ (ขยายเวลาเพิ่ม 7 วัน)
         async function reopenActivity(actId) {
             const act = activities.find(a => a.id === actId);
             if (!act) return;
@@ -1094,7 +1100,6 @@
             });
         }
 
-        // ฟังก์ชันล้างฟอร์มเพื่อสร้างกิจกรรมใหม่ และเปิด Drawer
         function createNewActivityForm() {
             toggleActivityFormDrawer(true);
             const adminSel = document.getElementById('admin-activity-select');
@@ -1106,7 +1111,6 @@
             document.getElementById('admin-form-drawer')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
-        // ดึงกิจกรรมมาแก้ไขในฟอร์ม และเปิด Drawer อัตโนมัติ
         function selectActivityToEdit(actId) {
             toggleActivityFormDrawer(true);
             const adminSel = document.getElementById('admin-activity-select');
@@ -1184,20 +1188,21 @@
 
                 const card = document.createElement('div');
                 card.onclick = () => selectActivityFromDashboard(act.id);
-                card.className = `w-full p-3 sm:p-4 rounded-xl cursor-pointer transition-all select-none border text-xs flex flex-col justify-between ${
+                // Flexible card layout: 2 columns on mobile, auto-expanding height, wrap down inside card
+                card.className = `w-full p-2.5 sm:p-3.5 rounded-xl cursor-pointer transition-all select-none border text-xs flex flex-col justify-between h-full min-h-[150px] ${
                     isSelected 
-                        ? 'bg-indigo-600 text-white shadow-md border-indigo-600 ring-2 ring-indigo-400 ring-offset-1 scale-[1.005]' 
-                        : 'bg-white text-gray-700 hover:border-indigo-300 hover:shadow-xs border-gray-200 hover:bg-indigo-50/30'
+                        ? 'bg-sky-50 text-sky-950 shadow-md border-sky-400 ring-2 ring-sky-300 ring-offset-1 scale-[1.01]' 
+                        : 'bg-white text-gray-700 hover:border-indigo-300 hover:shadow-xs border-gray-200 hover:bg-indigo-50/40'
                 }`;
 
                 let remarkHtml = '';
                 if (act.remark && act.remark.trim() !== '') {
                     remarkHtml = `
-                        <div class="mt-1.5 sm:mt-2 flex items-start gap-1.5 text-[11px] sm:text-xs rounded-lg p-1.5 leading-snug ${
-                            isSelected ? 'text-indigo-100 bg-white/15' : 'text-amber-800 bg-amber-50/90 border border-amber-200/60'
+                        <div class="mt-1.5 flex items-start gap-1 text-[11px] sm:text-xs rounded-lg p-1.5 leading-snug ${
+                            isSelected ? 'text-amber-900 bg-amber-100/80 border border-amber-300/80' : 'text-amber-800 bg-amber-50/90 border border-amber-200/70'
                         }">
-                            <i class="fa-solid fa-tag text-[10px] flex-shrink-0 mt-0.5 ${isSelected ? 'text-indigo-200' : 'text-amber-500'}"></i>
-                            <span class="break-words whitespace-normal line-clamp-2" title="${act.remark}">${act.remark}</span>
+                            <i class="fa-solid fa-tag text-[10px] flex-shrink-0 mt-0.5 ${isSelected ? 'text-amber-700' : 'text-amber-600'}"></i>
+                            <span class="break-words break-all whitespace-normal leading-snug w-full text-[11px] sm:text-xs" style="word-break: break-word; overflow-wrap: anywhere;">${act.remark}</span>
                         </div>
                     `;
                 }
@@ -1206,16 +1211,16 @@
                 if (isUrgentPending) {
                     const namesList = pendingEmps.map(p => p.name).join(', ');
                     pendingNamesHtml = `
-                        <div class="mt-2 p-2 rounded-lg border text-xs leading-snug ${
+                        <div class="mt-2 p-1.5 sm:p-2 rounded-lg border text-[10px] sm:text-xs leading-snug ${
                             isSelected 
-                                ? 'bg-amber-400/20 text-amber-200 border-amber-300/40' 
+                                ? 'bg-amber-100 text-amber-950 border-amber-300' 
                                 : 'bg-amber-50 text-amber-900 border-amber-200'
                         }">
-                            <div class="font-bold flex items-center gap-1 mb-0.5 text-[11px] sm:text-xs">
-                                <i class="fa-solid fa-bell text-amber-500 text-[10px] animate-bounce"></i>
-                                <span>เหลืออีก ${remainingCount} คน:</span>
+                            <div class="font-bold flex items-center gap-1 mb-0.5 text-[10px] sm:text-xs">
+                                <i class="fa-solid fa-bell text-amber-600 text-[10px] animate-bounce"></i>
+                                <span>เหลือ ${remainingCount} คน:</span>
                             </div>
-                            <div class="font-medium break-words whitespace-normal text-[11px] sm:text-xs line-clamp-2" title="${namesList}">
+                            <div class="font-medium break-words break-all whitespace-normal leading-snug text-[10px] sm:text-xs" style="word-break: break-word; overflow-wrap: anywhere;">
                                 ${namesList}
                             </div>
                         </div>
@@ -1223,35 +1228,35 @@
                 }
 
                 card.innerHTML = `
-                    <div>
-                        <div class="flex items-start justify-between gap-1.5 mb-1.5">
-                            <span class="font-bold text-xs sm:text-sm leading-snug line-clamp-2 break-words ${isSelected ? 'text-white' : 'text-gray-900'}" title="${act.topic}">
+                    <div class="flex-1 flex flex-col justify-start">
+                        <div class="flex items-start justify-between gap-1 mb-1">
+                            <span class="font-bold text-[12px] sm:text-sm leading-snug break-words break-all whitespace-normal flex-1 ${isSelected ? 'text-sky-950' : ''}" style="word-break: break-word; overflow-wrap: anywhere;">
                                 ${act.topic}
                             </span>
                             ${isSelected 
-                                ? '<span class="flex-shrink-0 bg-white/20 text-[10px] sm:text-xs font-bold px-1.5 sm:px-2 py-0.5 rounded text-white flex items-center gap-0.5"><i class="fa-solid fa-check text-[9px]"></i>เลือก</span>' 
+                                ? '<span class="flex-shrink-0 bg-sky-200 text-sky-900 text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5 border border-sky-300"><i class="fa-solid fa-check text-[8px] text-sky-700"></i>เลือก</span>' 
                                 : '<span class="flex-shrink-0 text-xs text-gray-400 p-0.5"><i class="fa-regular fa-circle"></i></span>'}
                         </div>
                         ${remarkHtml}
-                        <div class="flex items-center justify-between text-xs mt-2.5 mb-1.5 ${isSelected ? 'text-indigo-100' : 'text-gray-500'}">
-                            <span><i class="fa-solid fa-user-check mr-1"></i>${doneCount}/${totalTarget} คน</span>
-                            <span class="font-bold">${percent}%</span>
+                        <div class="flex items-center justify-between text-[10px] sm:text-xs mt-2 mb-1 ${isSelected ? 'text-sky-800 font-medium' : 'text-gray-500'}">
+                            <span><i class="fa-solid fa-user-check mr-0.5 ${isSelected ? 'text-sky-600' : ''}"></i>${doneCount}/${totalTarget} คน</span>
+                            <span class="font-bold ${isSelected ? 'text-sky-900' : ''}">${percent}%</span>
                         </div>
                         <!-- Progress Bar -->
-                        <div class="w-full bg-black/10 rounded-full h-1.5 overflow-hidden">
-                            <div class="${isComplete ? 'bg-emerald-400' : (isSelected ? 'bg-white' : 'bg-indigo-500')} h-1.5 rounded-full transition-all duration-300" style="width: ${percent}%"></div>
+                        <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                            <div class="${isComplete ? 'bg-emerald-500' : (isSelected ? 'bg-sky-500' : 'bg-indigo-500')} h-1.5 rounded-full transition-all duration-300" style="width: ${percent}%"></div>
                         </div>
                         
                         ${pendingNamesHtml}
                     </div>
 
-                    <div class="flex items-center justify-between pt-2.5 mt-2.5 border-t ${isSelected ? 'border-indigo-500/60' : 'border-gray-100'} text-xs">
+                    <div class="flex items-center justify-between pt-1.5 mt-2 border-t ${isSelected ? 'border-sky-200' : 'border-gray-100'} text-[10px] sm:text-xs">
                         ${isComplete 
-                            ? `<span class="inline-flex items-center text-emerald-300 font-semibold ${!isSelected ? 'text-emerald-600' : ''}"><i class="fa-solid fa-circle-check mr-1"></i>ครบ</span>`
-                            : `<span class="${isSelected ? 'text-indigo-200' : 'text-gray-500'}"><i class="fa-regular fa-clock mr-1"></i>เปิดอยู่</span>`
+                            ? `<span class="inline-flex items-center text-emerald-700 font-semibold"><i class="fa-solid fa-circle-check mr-1 text-emerald-600"></i>ครบ</span>`
+                            : `<span class="${isSelected ? 'text-sky-700 font-medium' : 'text-gray-500'}"><i class="fa-regular fa-clock mr-1"></i>เปิดอยู่</span>`
                         }
-                        <span class="text-xs ${isSelected ? 'text-white font-semibold' : 'text-indigo-600 font-medium'}">
-                            ${isSelected ? 'เลือกอยู่ <i class="fa-solid fa-check text-[10px]"></i>' : 'แตะเลือก <i class="fa-solid fa-angle-right text-[10px]"></i>'}
+                        <span class="text-[9px] sm:text-xs ${isSelected ? 'text-sky-800 font-bold' : 'text-indigo-600 font-medium'}">
+                            ${isSelected ? 'เลือกอยู่ <i class="fa-solid fa-check text-[8px]"></i>' : 'แตะเลือก <i class="fa-solid fa-angle-right text-[8px]"></i>'}
                         </span>
                     </div>
                 `;
@@ -1259,13 +1264,13 @@
                 container.appendChild(card);
             });
 
-            // Show placeholder empty card only on desktop (lg screen) to fill 4 columns if fewer than 4 activities
+            // Show placeholder empty card strictly on desktop (lg: screen) to fill 4 columns
             const minCards = 4;
             const diffCards = minCards - ongoingActs.length;
             if (diffCards > 0) {
                 for (let i = 0; i < diffCards; i++) {
                     const emptyCard = document.createElement('div');
-                    emptyCard.className = 'hidden lg:flex w-full p-3.5 sm:p-4 rounded-xl border-2 border-dashed border-gray-200 text-xs flex-col items-center justify-center text-center text-gray-400 bg-gray-50/50 min-h-[120px] select-none';
+                    emptyCard.className = 'hidden lg:flex w-full p-4 rounded-xl border-2 border-dashed border-gray-200 text-xs flex-col items-center justify-center text-center text-gray-400 bg-gray-50/50 min-h-[130px] select-none';
                     emptyCard.innerHTML = `
                         <i class="fa-regular fa-calendar-plus text-gray-300 text-xl mb-1"></i>
                         <span class="text-xs font-semibold text-gray-400">ช่องกิจกรรมว่าง</span>
